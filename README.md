@@ -55,6 +55,11 @@ Cloudflare build settings:
 - Build credentials remain in Cloudflare and need D1 Edit for schema migrations,
   plus Worker deployment, R2 binding, and route permissions.
 
+The apex and `www` hosts serve through ordinary Worker routes with proxied DNS.
+The Worker handles every request and returns its own 404; it never forwards
+unknown paths to the preserved parking origin. Production version preview URLs
+are disabled. The workers.dev hostname remains available for diagnostics.
+
 The committed configuration identifies the production D1 `newz-rip` and private
 R2 bucket `newz-rip-archive`. Provisioning is a one-time operation, never a build
 step. Migrations apply before code publication and must remain backward compatible

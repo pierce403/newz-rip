@@ -37,5 +37,17 @@
       "enabled": true
     }
   },
-  "account_id": "b6d1478423f0bb0c0477df387305e46b"
+  "account_id": "b6d1478423f0bb0c0477df387305e46b",
+  "workers_dev": true,
+  "preview_urls": false,
+  "routes": [
+    {
+      "pattern": "newz.rip/*",
+      "zone_name": "newz.rip"
+    },
+    {
+      "pattern": "www.newz.rip/*",
+      "zone_name": "newz.rip"
+    }
+  ]
 }
