@@ -1,0 +1,8 @@
+node_modules/
+.wrangler/
+dist/
+public/app.js
+.dev.vars
+.env*
+coverage/
+*.log

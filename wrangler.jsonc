@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "newz-rip", "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": { "directory": "./public", "binding": "ASSETS", "run_worker_first": true },
+  "d1_databases": [{ "binding": "DB", "database_name": "newz-rip", "database_id": "00000000-0000-0000-0000-000000000000", "migrations_dir": "migrations" }],
+  "r2_buckets": [{ "binding": "ARCHIVE", "bucket_name": "newz-rip-archive" }],
+  "vars": { "APP_NAME": "newz.rip", "ARCHIVE_PUBLIC": "true", "ALLOW_BROWSER_RENDERING": "false", "ALLOW_WAYBACK": "true" },
+  "observability": { "enabled": true }
+}
