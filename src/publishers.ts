@@ -9,7 +9,7 @@ export interface Publisher {
 export const PUBLISHERS: Publisher[] = [
   { name: 'The New York Times', hosts: ['nytimes.com'], selectors: ['section[name="articleBody"]', '[data-testid="article-body"]', '.StoryBodyCompanionColumn', '.articleBody'], amp: true },
   { name: 'The Washington Post', hosts: ['washingtonpost.com'], selectors: ['.article-body', '[data-qa="article-body"]', '.teaser-content', '.story-body'], amp: true },
-  { name: 'The Wall Street Journal', hosts: ['wsj.com'], selectors: ['.article-content', '.wsj-snippet-body', '[data-testid="article-body"]', '.articleBody'], amp: true },
+  { name: 'The Wall Street Journal', hosts: ['wsj.com'], selectors: ['.article-content', '.wsj-snippet-body', '[data-testid="article-body"]', '.articleBody', 'article section'], amp: true },
   { name: 'Financial Times', hosts: ['ft.com'], selectors: ['.article__content-body', '.article-body', '#article-body'], amp: true },
   { name: 'Bloomberg', hosts: ['bloomberg.com'], selectors: ['.body-copy', '.body-content', '[data-component="body"]', '.story-body'] },
   { name: 'The Economist', hosts: ['economist.com'], selectors: ['.article__body', '[data-test-id="ArticleBody"]', '.article-body', '[class*="Article_body"]'] },

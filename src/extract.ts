@@ -32,6 +32,19 @@ function normalizeText(value: string): string { return value.replace(/\s+/g, ' '
 function string(value: unknown): string | undefined { return typeof value === 'string' && value.trim() ? value.trim() : undefined; }
 function object(value: unknown): JsonObject | null { return value !== null && typeof value === 'object' && !Array.isArray(value) ? value as JsonObject : null; }
 
+/** Some paywalled state contains ciphertext/base64, not a readable articleBody. */
+function encodedBody(value: string): boolean {
+  const text = value.trim();
+  if (text.length < 200) return false;
+  if (/^[a-fA-F\d]+$/.test(text)) return true;
+  const compact = text.replace(/\s/g, '');
+  if (!/^[A-Za-z\d+/_=-]+$/.test(compact)) return false;
+  if (!/\s/.test(text)) return true;
+  // MIME-folded base64 is usually one long token per 64/76-character line.
+  const lines = text.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+  return lines.length >= 3 && lines.slice(0, -1).every(line => !/\s/.test(line) && line.length >= 60 && line.length <= 80) && (/[+/_=]/.test(compact) || lines.every(line => /\d/.test(line)));
+}
+
 function authorName(value: unknown): string | null {
   if (Array.isArray(value)) return value.map(authorName).filter(Boolean).join(', ') || null;
   if (typeof value === 'string') return value.trim() || null;
@@ -84,7 +97,7 @@ function structuredNodes(document: Document): JsonObject[] {
 
 function jsonLdCandidate(node: JsonObject, url: string): Candidate | null {
   const body = string(node.articleBody) || string(node.text);
-  if (!body || body.length < 100) return null;
+  if (!body || body.length < 100 || encodedBody(body)) return null;
   return {
     content: plainBody(body), method: 'json-ld', title: string(node.headline) || string(node.name),
     byline: authorName(node.author) || authorName(node.creator), excerpt: string(node.description),
@@ -95,7 +108,7 @@ function jsonLdCandidate(node: JsonObject, url: string): Candidate | null {
 /** Convert common rich-text state formats without executing publisher JavaScript. */
 function richText(value: unknown, depth = 0): string {
   if (depth > 16) return '';
-  if (typeof value === 'string') return value.length > 30 ? (/<(?:p|div|section|h[1-6]|ul|blockquote)\b/i.test(value) ? value : plainBody(value)) : '';
+  if (typeof value === 'string') return value.length > 30 && !encodedBody(value) ? (/<(?:p|div|section|h[1-6]|ul|blockquote)\b/i.test(value) ? value : plainBody(value)) : '';
   if (Array.isArray(value)) return value.slice(0, 2000).map(item => richText(item, depth + 1)).join('\n');
   const node = object(value);
   if (!node) return '';
@@ -145,7 +158,7 @@ function nuxtPayload(value: unknown): unknown {
   return resolve(value[0], new Set([0]), 0);
 }
 
-function embeddedCandidates(document: Document): Candidate[] {
+function embeddedCandidates(document: Document, diagnostics: { encodedBody: boolean }): Candidate[] {
   const candidates: Candidate[] = [];
   for (const script of document.querySelectorAll('script')) {
     const raw = (script.textContent || '').trim();
@@ -178,6 +191,7 @@ function embeddedCandidates(document: Document): Candidate[] {
           const explicitBody = BODY_KEYS.has(key) || key === 'content_elements';
           const contextualBody = entity && /^(?:body|content|blocks|paragraphs)$/i.test(key);
           if (explicitBody || contextualBody) {
+            if (typeof value === 'string' && encodedBody(value)) { diagnostics.encodedBody = true; continue; }
             const content = richText(value);
             if (textOf(content).length >= 100) candidates.push({ content, method: 'embedded-state', title: string(node.headline) || string(node.title) || string(object(node.headlines)?.basic), byline: authorName(node.author) || authorName(node.byline), excerpt: string(node.description), publishedAt: isoDate(node.datePublished || node.publishedAt || node.publish_date) });
           }
@@ -196,6 +210,8 @@ function cleanContent(html: string): string {
   for (const node of document.querySelectorAll('p,blockquote,li')) {
     const normalized = normalizeText(node.textContent || '');
     if (!normalized && !node.querySelector('img')) { node.remove(); continue; }
+    if (encodedBody(normalized)) { node.remove(); continue; }
+    if (/^(?:this copy is for your personal,? non-commercial use only|copyright\s*(?:©|\(c\))\s*\d{4})/i.test(normalized)) { node.remove(); continue; }
     if (NOISE_TEXT.test(normalized) && normalized.length < 240) { node.remove(); continue; }
     if (normalized.length >= 60) {
       const key = normalized.toLowerCase();
@@ -208,6 +224,7 @@ function cleanContent(html: string): string {
 function scoreCandidate(candidate: Candidate, url: string): { content: string; text: string; score: number } {
   const content = sanitizeHtml(cleanContent(candidate.content), url);
   const text = textOf(content);
+  if (encodedBody(text)) return { content: '', text: '', score: 0 };
   const { document } = parseHTML(`<html><body>${content}</body></html>`);
   const paragraphs = Array.from(document.querySelectorAll('p')).filter(node => normalizeText(node.textContent || '').length > 80).length;
   const linkText = Array.from(document.querySelectorAll('a')).reduce((sum, node) => sum + (node.textContent || '').length, 0);
@@ -244,21 +261,31 @@ export function extractArticle(html: string, url: string): Article | null {
   const structured = structuredNodes(document);
   const primary = structured.find(node => string(node.articleBody)) || structured[0];
   const candidates: Candidate[] = [];
+  const diagnostics = { encodedBody: structured.some(node => typeof node.articleBody === 'string' && encodedBody(node.articleBody)) };
   for (const node of structured) {
     const candidate = jsonLdCandidate(node, url);
     if (candidate) candidates.push(candidate);
   }
-  candidates.push(...embeddedCandidates(document));
+  candidates.push(...embeddedCandidates(document, diagnostics));
   const publisher = publisherForUrl(url);
   for (const selector of [...publisherSelectors(url), '[itemprop="articleBody"]']) {
     const nodes = Array.from(document.querySelectorAll(selector));
     const roots = nodes.filter(node => !nodes.some(other => other !== node && other.contains(node)));
     if (roots.length) candidates.push({ content: roots.map(node => node.outerHTML).join('\n'), method: 'publisher' });
   }
+  const hasArticle = !!document.querySelector('article');
   for (const selector of ['article', '[role="main"]', 'main', '.entry-content', '.post-content', '.article-body', '.story-body', '.gh-content', '.wp-block-post-content', '#article-body', '#storytext']) {
+    // An enclosing main often contains recommendations, legal boilerplate and multiple unrelated stories.
+    if (hasArticle && (selector === 'main' || selector === '[role="main"]')) continue;
     for (const node of Array.from(document.querySelectorAll(selector)).slice(0, 24)) candidates.push({ content: node.outerHTML, method: 'generic' });
   }
   for (const selector of REMOVE_SELECTORS) for (const node of document.querySelectorAll(selector)) node.remove();
+  if (hasArticle && document.body) {
+    const articleNodes = Array.from(document.querySelectorAll('article')).filter(node => node.querySelector('p'));
+    const focused = articleNodes.sort((a, b) => (b.textContent || '').length - (a.textContent || '').length)[0];
+    // Move the article rather than cloning the page, so Readability cannot absorb unrelated sibling prose.
+    if (focused && (focused.textContent || '').length >= 300) document.body.replaceChildren(focused);
+  }
   // Readability resolves relative URLs against document.baseURI. Our sanitizer always uses the actual fetched URL.
   for (const base of document.querySelectorAll('base')) base.remove();
   try {
@@ -300,9 +327,10 @@ export function extractArticle(html: string, url: string): Article | null {
   const declaredWordCount = typeof primary?.wordCount === 'number' ? primary.wordCount : Number(primary?.wordCount);
   const declaredShortfall = Number.isFinite(declaredWordCount) && declaredWordCount > 100 && wordCount < declaredWordCount * 0.75;
   const shortArticle = wordCount < 180 && cjk < 300;
-  const quality = visibleStop || declaredShortfall || (shortArticle && paywallPresent) || wordCount < 80 ? 'partial' : 'full';
+  const quality = diagnostics.encodedBody || visibleStop || declaredShortfall || (shortArticle && paywallPresent) || wordCount < 80 ? 'partial' : 'full';
   if (quality === 'partial') warnings.push('The publisher response appears to contain only part of the article. Missing text cannot be reconstructed.');
   if (paywallPresent && !declaredWordCount) warnings.push('The page includes subscription controls; completeness cannot be independently verified.');
+  if (diagnostics.encodedBody) warnings.push('The publisher supplied encoded or encrypted article data. Only readable text present in the response is available.');
   if (challenge) warnings.push(challenge);
   const image = best.candidate.image || imageUrl(primary?.image, url) || publicUrl(meta('og:image') || meta('twitter:image'), url) || publicUrl(parseHTML(`<html><body>${best.content}</body></html>`).document.querySelector('img')?.getAttribute('src'), url);
   return { url, canonicalUrl, title, byline: byline ? normalizeText(byline).slice(0, 300) : null, siteName, excerpt, publishedAt: publishedAt || null, language, content: best.content, textContent: best.text, wordCount, readingMinutes: Math.max(1, Math.ceil(wordCount / 220)), image, extractionMethod: best.candidate.method, quality, warnings };
