@@ -80,7 +80,8 @@ describe('real Workers + D1 + R2 archive',()=>{
       for(const statement of readFileSync('migrations/0001_archive.sql','utf8').split(';').map(s=>s.trim()).filter(Boolean))await db.prepare(statement).run();
       const endpoint='https://private.example.com';
       expect((await protectedWorker.dispatchFetch(endpoint+'/api/import',{method:'POST',headers:{'content-type':'application/json'},body:'{}'})).status).toBe(401);
-      const saved=await protectedWorker.dispatchFetch(endpoint+'/api/import',{method:'POST',headers:{'content-type':'application/json',Authorization:'Bearer capture-test-token'},body:JSON.stringify({url:'https://example.com/private-story',html:sourceHtml()})});
+      expect((await protectedWorker.dispatchFetch(endpoint+'/api/capture',{method:'POST',headers:{'content-type':'application/json',Authorization:'Bearer capture-test-token'},body:JSON.stringify({url:'https://example.com/private-story'})})).status).toBe(401);
+      const saved=await protectedWorker.dispatchFetch(endpoint+'/api/import',{method:'POST',headers:{'content-type':'application/json',Authorization:'Bearer admin-test-token'},body:JSON.stringify({url:'https://example.com/private-story',html:sourceHtml()})});
       expect(saved.status).toBe(200);const {snapshot}=await saved.json() as {snapshot:{id:string;objectKey:string}};
       expect((await protectedWorker.dispatchFetch(endpoint+'/api/snapshots/'+snapshot.id)).status).toBe(401);
       expect((await protectedWorker.dispatchFetch(endpoint+'/api/snapshots/'+snapshot.id,{headers:{Authorization:'Bearer admin-test-token'}})).status).toBe(200);

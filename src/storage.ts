@@ -68,8 +68,8 @@ export async function saveCapture(env: Env, capture: CaptureResult): Promise<{st
   };
   const archived = await archiveImages(article,id,env);
   const stored: StoredCapture = {...capture,article:archived.article,snapshot,mediaKeys:archived.keys};
-  await env.ARCHIVE.put(objectKey,JSON.stringify(stored),{httpMetadata:{contentType:'application/json'}});
   try {
+    await env.ARCHIVE.put(objectKey,JSON.stringify(stored),{httpMetadata:{contentType:'application/json'}});
     await env.DB.batch([
       env.DB.prepare('INSERT OR IGNORE INTO snapshots(id,url,canonical_url,title,site_name,byline,captured_at,published_at,content_hash,word_count,quality,extraction_method,object_key) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)')
         .bind(id,article.url,canonical,article.title,article.siteName,article.byline,snapshot.capturedAt,article.publishedAt,hash,article.wordCount,article.quality,article.extractionMethod,objectKey),

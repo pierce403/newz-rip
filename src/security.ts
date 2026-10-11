@@ -27,6 +27,9 @@ export async function tokenMatches(given:string,expected:string):Promise<boolean
 export async function authorizeCapture(request:Request,env:Env):Promise<void> {
   const origin = request.headers.get('origin');
   if (origin && origin !== new URL(request.url).origin) throw new AppError('Cross-site capture requests are not allowed.',403,'forbidden');
+  // Captures can return cached or deduplicated snapshots, so private archives
+  // must apply their read policy before any capture/import response.
+  if (env.ARCHIVE_PUBLIC === 'false') { await authorizeArchive(request,env); return; }
   if (env.CAPTURE_TOKEN && !await tokenMatches(bearer(request),env.CAPTURE_TOKEN)) throw new AppError('Enter the capture access token to save an article.',401,'unauthorized');
 }
 export async function authorizeArchive(request:Request,env:Env):Promise<void> {
