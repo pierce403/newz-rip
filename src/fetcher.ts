@@ -1,5 +1,6 @@
 import { parseHTML } from 'linkedom';
 import { extractArticle } from './extract';
+import { renderPublicArticle } from './browser';
 import { AppError, assertPublicDns, normalizeUrl, validateTarget } from './url';
 import type { Attempt, CaptureResult, Env } from './types';
 
@@ -99,6 +100,20 @@ export async function fetchArticle(input: string, env: Partial<Env> = {}, option
     }
   }
   if (await attempt('mobile', original, MOBILE)) return best!;
+  if (env.ALLOW_BROWSER_RENDERING === 'true' && env.BROWSER) {
+    const started=Date.now();
+    try {
+      const fetched=await renderPublicArticle(original,env);
+      const article=extractArticle(fetched.html,fetched.url);
+      if(!article)throw new AppError('The rendered page did not contain a readable article.',422,'empty_article');
+      article.url=original;
+      attempts.push({strategy:'browser',url:fetched.url,status:article.quality==='full'?'success':'partial',message:article.quality==='full'?'Readable article found after rendering.':'Rendered page contains a partial article.',durationMs:Date.now()-started});
+      const rendered={article,attempts,rawHtml:fetched.html};
+      const previous=best as CaptureResult|null;
+      if(!previous || (article.quality==='full' && previous.article.quality!=='full') || (article.quality===previous.article.quality && article.wordCount>previous.article.wordCount))best=rendered;
+      if(article.quality==='full')return rendered;
+    }catch(error){attempts.push({strategy:'browser',url:original,status:'failed',message:error instanceof AppError?error.message:'Browser rendering was unavailable.',durationMs:Date.now()-started});}
+  }
   if (env.ALLOW_WAYBACK !== 'false' && Date.now() < deadline - 1500) {
     const started = Date.now();
     try {
