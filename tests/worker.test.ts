@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { Miniflare, Response as RuntimeResponse, Request as RuntimeRequest } from 'miniflare';
+import { Miniflare, convertV4MiniflareOptions, Response as RuntimeResponse, Request as RuntimeRequest } from 'miniflare';
 import { readFileSync, readdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { build } from 'esbuild';
@@ -15,12 +15,12 @@ async function save(extra:Record<string,unknown>={}){
 beforeAll(async()=>{
   await build({entryPoints:['web/app.ts'],bundle:true,format:'esm',outfile:'public/app.js'});
   execFileSync(process.execPath,['node_modules/wrangler/bin/wrangler.js','deploy','--dry-run','--outdir','.wrangler/test-build'],{env:{...process.env,WRANGLER_SEND_METRICS:'false'},stdio:'pipe'});
-  worker=new Miniflare({modules:true,scriptPath:'.wrangler/test-build/index.js',compatibilityDate:'2026-08-06',compatibilityFlags:['nodejs_compat'],d1Databases:{DB:'test-db'},r2Buckets:{ARCHIVE:'test-archive'},bindings:{APP_NAME:'newz.rip',ARCHIVE_IMAGES:'false',ALLOW_WAYBACK:'false'},outboundService:async (request:RuntimeRequest)=>{
+  worker=new Miniflare(convertV4MiniflareOptions({modules:true,scriptPath:'.wrangler/test-build/index.js',compatibilityDate:'2026-08-06',compatibilityFlags:['nodejs_compat'],d1Databases:{DB:'test-db'},r2Buckets:{ARCHIVE:'test-archive'},bindings:{APP_NAME:'newz.rip',ARCHIVE_IMAGES:'false',ALLOW_WAYBACK:'false'},outboundService:async (request:RuntimeRequest)=>{
     const url=new URL(request.url);
     if(url.hostname==='cloudflare-dns.com')return RuntimeResponse.json({Status:0,Answer:[{type:1,data:'8.8.8.8'}]});
     if(url.hostname==='news.example.com')return new RuntimeResponse(sourceHtml(),{headers:{'content-type':'text/html; charset=utf-8'}});
     return new RuntimeResponse('Unexpected outbound request',{status:502});
-  }});
+  }}));
   const db=await worker.getD1Database('DB');
   const migration=readdirSync('migrations').filter(p=>p.endsWith('.sql')).sort().map(p=>readFileSync('migrations/'+p,'utf8')).join('\n');
   for(const statement of migration.split(';').map(s=>s.trim()).filter(Boolean))await db.prepare(statement).run();
@@ -93,7 +93,7 @@ describe('real Workers + D1 + R2 archive',()=>{
     expect(response.status).toBe(429);
   });
   it('protects capture, private API reads, and administrator deletion',async()=>{
-    const protectedWorker=new Miniflare({modules:true,scriptPath:'.wrangler/test-build/index.js',compatibilityDate:'2026-08-06',compatibilityFlags:['nodejs_compat'],d1Databases:{DB:'protected-db'},r2Buckets:{ARCHIVE:'protected-archive'},bindings:{ARCHIVE_IMAGES:'false',CAPTURE_TOKEN:'capture-test-token',ADMIN_TOKEN:'admin-test-token',ARCHIVE_PUBLIC:'false'}});
+    const protectedWorker=new Miniflare(convertV4MiniflareOptions({modules:true,scriptPath:'.wrangler/test-build/index.js',compatibilityDate:'2026-08-06',compatibilityFlags:['nodejs_compat'],d1Databases:{DB:'protected-db'},r2Buckets:{ARCHIVE:'protected-archive'},bindings:{ARCHIVE_IMAGES:'false',CAPTURE_TOKEN:'capture-test-token',ADMIN_TOKEN:'admin-test-token',ARCHIVE_PUBLIC:'false'}}));
     try {
       const db=await protectedWorker.getD1Database('DB');
       for(const statement of readdirSync('migrations').filter(p=>p.endsWith('.sql')).sort().map(p=>readFileSync('migrations/'+p,'utf8')).join('\n').split(';').map(s=>s.trim()).filter(Boolean))await db.prepare(statement).run();

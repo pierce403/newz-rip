@@ -106,6 +106,28 @@ Deletion removes the searchable edition and retains a durable list of R2 objects
 until deletion succeeds. Repeating the same authorized DELETE finishes a failed
 cleanup. Capture storage failures also clean up already-preserved media.
 
+## Dependency advisories
+
+The October 11, 2026 `npm audit` reports seven high-severity package findings.
+These are dependency-chain findings, not seven distinct vulnerabilities. The
+development-only Miniflare dependency now matches Wrangler's
+`5.20261006.1-alpha`, with patched `sharp` 0.35.5 and `undici` 7.29.1.
+
+The remaining findings come through `@cloudflare/puppeteer` 1.4.0's Node browser
+downloader dependencies: `@puppeteer/browsers`, `extract-zip`, and the
+`proxy-agent` → `pac-proxy-agent` → `get-uri` → `basic-ftp` chain. They include
+[ZIP symlink arbitrary-file writes](https://github.com/advisories/GHSA-7pqw-9j4j-h8q3)
+and [FTP directory-listing CPU denial of service](https://github.com/advisories/GHSA-c475-qrg2-pj4r).
+
+Inspection of the generated `dist/index.js` found none of those downloader
+module paths or their ZIP extraction/FTP implementation identifiers. The
+application uses Cloudflare's remote browser binding and accepts neither ZIP
+archives nor FTP listings. This limits the observed runtime exposure; it does
+not make the installed dependency tree vulnerability-free. Keep monitoring
+upstream releases and run `npm audit` when updating dependencies. Do not apply
+`npm audit fix --force` blindly: its proposed SDK downgrade changes compatibility
+and has not been validated for this application.
+
 ## References
 
 - [Cloudflare Browser Run Workers setup](https://developers.cloudflare.com/browser-run/get-started/)
