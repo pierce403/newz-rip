@@ -2,8 +2,11 @@ export interface Env {
   DB: D1Database;
   ARCHIVE: R2Bucket;
   ASSETS?: Fetcher;
+  BROWSER?: Fetcher;
+  BROWSER_ALLOWED_HOSTS?: string;
   APP_NAME?: string;
   ARCHIVE_PUBLIC?: string;
+  ARCHIVE_IMAGES?: string;
   ADMIN_TOKEN?: string;
   CAPTURE_TOKEN?: string;
   ALLOW_WAYBACK?: string;
@@ -59,5 +62,6 @@ export interface Snapshot {
   objectKey: string;
 }
 export interface StoredCapture extends CaptureResult {
+  mediaKeys?: string[];
   snapshot: Snapshot;
 }

@@ -13,9 +13,10 @@
     "deploy": "npm run build:web && wrangler deploy",
     "db:local": "wrangler d1 migrations apply newz-rip --local",
     "db:remote": "wrangler d1 migrations apply newz-rip --remote",
-    "compat": "tsx scripts/compat.ts"
+    "compat": "node --import tsx scripts/compat.ts"
   },
   "dependencies": {
+    "@cloudflare/puppeteer": "1.4.0",
     "@mozilla/readability": "0.6.0",
     "linkedom": "0.18.13"
   },
