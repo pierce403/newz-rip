@@ -8,7 +8,9 @@ function workspace():string {
   const path=mkdtempSync(join(tmpdir(),'newz-setup-'));mkdirSync(join(path,'scripts'));
   copyFileSync('scripts/setup-cloudflare.mjs',join(path,'scripts/setup-cloudflare.mjs'));
   copyFileSync('scripts/deploy.mjs',join(path,'scripts/deploy.mjs'));
-  copyFileSync('wrangler.jsonc',join(path,'wrangler.jsonc'));
+  const config=JSON.parse(readFileSync('wrangler.jsonc','utf8'));
+  config.d1_databases[0].database_id='00000000-0000-0000-0000-000000000000';
+  writeFileSync(join(path,'wrangler.jsonc'),JSON.stringify(config));
   return path;
 }
 const account='a'.repeat(32);const uuid='12345678-1234-1234-1234-123456789abc';

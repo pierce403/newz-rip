@@ -28,7 +28,7 @@ npm run db:local
 npm run dev
 ```
 
-Open the URL printed by Wrangler. Local D1 and R2 persist under `.wrangler/state`. The placeholder D1 UUID is intentional for local development; production deploy refuses it. Optional local secrets go in ignored `.dev.vars`.
+Open the URL printed by Wrangler. Local D1 and R2 persist under `.wrangler/state`. Local development uses simulated D1/R2 resources; the committed production IDs do not make local commands remote. Production deploy refuses a placeholder D1 UUID. Optional local secrets go in ignored `.dev.vars`.
 
 ```sh
 npm run check
@@ -42,25 +42,32 @@ Compatibility `full_candidate` is an extraction heuristic, not proof that a subs
 
 ## Deploy on Cloudflare
 
-Create an account with Workers, D1 and R2 enabled. R2 may require account billing activation. Log in with `npx wrangler login` for Wrangler, or provide `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` through your shell's secret environment. The setup script uses these environment variables; it never saves the token.
+Production uses Cloudflare Workers Builds connected to `pierce403/newz-rip`.
+A push to `main` makes Cloudflare fetch, validate, migrate D1, and publish.
+GitHub Actions runs validation only; no Cloudflare credentials belong in GitHub secrets.
 
-The setup token needs account-level **D1 Edit** and **Workers R2 Storage Edit**. Wrangler deployment additionally needs **Workers Scripts Edit** and account read access. Add permissions for custom domains only if configuring one. Keep the account ID and token out of shell command arguments and Git.
+Cloudflare build settings:
 
-```sh
-npm run setup:cloudflare   # finds or creates named D1/R2; writes only non-secret IDs
-npm run db:remote         # applies archive schema to the remote D1 database
-npm run deploy            # builds browser assets and deploys the Worker
-```
+- Root: `/`; production branch: `main`; Node.js: `22`.
+- Build: `npm run build:web && npm run check && npm test`.
+- Deploy: `npm run db:remote && node scripts/deploy.mjs`.
+- Preview builds: disabled because production D1/R2 bindings are shared.
+- Build credentials remain in Cloudflare and need D1 Edit for schema migrations,
+  plus Worker deployment, R2 binding, and route permissions.
 
-Alternatively create resources with `npx wrangler d1 create newz-rip` and `npx wrangler r2 bucket create newz-rip-archive`, then copy the database UUID into `wrangler.jsonc`. The setup command preserves existing resources and never deletes or replaces data. Resource provisioning is an explicit command, not an application startup side effect.
+The committed configuration identifies the production D1 `newz-rip` and private
+R2 bucket `newz-rip-archive`. Provisioning is a one-time operation, never a build
+step. Migrations apply before code publication and must remain backward compatible
+with the previously deployed Worker. Check `/api/health` after a successful build.
 
-Check `https://YOUR-HOST/api/health`. Add a Cloudflare custom domain by appending this to `wrangler.jsonc` when the zone is in your account:
+For a separate installation, create D1/R2 with Wrangler and update the non-secret
+resource IDs. `npm run setup:cloudflare` can also find/create named resources using
+credentials supplied through the shell environment; it never saves the token.
 
-```json
-"routes": [{ "pattern": "newz.rip", "custom_domain": true }]
-```
-
-The included **Deploy Cloudflare** workflow is manually triggered. Configure repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`; it validates the code, provisions existing/named resources, applies migrations and deploys. Ordinary pushes run validation only.
+Manual recovery only: pause automatic builds and wait for active builds to finish,
+then apply `npm run db:remote` and `npm run deploy` with authorized local Wrangler
+credentials. Verify the deployed version and public behavior before re-enabling
+native builds. Worker rollback does not roll back D1 or R2 data.
 
 ## Optional browser fallback
 
