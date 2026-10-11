@@ -7,12 +7,12 @@ export async function sha256(text: string): Promise<string> {
   return [...new Uint8Array(bytes)].map(b => b.toString(16).padStart(2,'0')).join('');
 }
 interface Row {
-  id: string; url: string; canonical_url: string; title: string; site_name: string; byline: string|null;
+  source: 'fetch'|'import'; id: string; url: string; canonical_url: string; title: string; site_name: string; byline: string|null;
   captured_at: string; published_at: string|null; content_hash: string; word_count: number;
   quality: Article['quality']; extraction_method: Article['extractionMethod']; object_key: string;
 }
 function fromRow(row: Row): Snapshot {
-  return { id: row.id, url: row.url, canonicalUrl: row.canonical_url, title: row.title, siteName: row.site_name,
+  return { source:row.source ?? 'fetch', id: row.id, url: row.url, canonicalUrl: row.canonical_url, title: row.title, siteName: row.site_name,
     byline: row.byline, capturedAt: row.captured_at, publishedAt: row.published_at, contentHash: row.content_hash,
     wordCount: row.word_count, quality: row.quality, extractionMethod: row.extraction_method, objectKey: row.object_key };
 }
@@ -27,7 +27,7 @@ export async function getSnapshot(env: Env, id: string): Promise<StoredCapture|n
   return stored;
 }
 export async function latestSnapshot(env: Env, url: string): Promise<StoredCapture|null> {
-  const row = await env.DB.prepare('SELECT id FROM snapshots WHERE url=? OR canonical_url=? ORDER BY captured_at DESC LIMIT 1').bind(url,url).first<{id:string}>();
+  const row = await env.DB.prepare("SELECT id FROM snapshots WHERE (url=? OR canonical_url=?) AND source='fetch' ORDER BY captured_at DESC LIMIT 1").bind(url,url).first<{id:string}>();
   return row ? getSnapshot(env,row.id) : null;
 }
 export async function listSnapshots(env: Env, options: {url?:string;q?:string;page?:number;limit?:number;offset?:number} = {}): Promise<Snapshot[]> {
@@ -50,9 +50,15 @@ export async function listSnapshots(env: Env, options: {url?:string;q?:string;pa
 
 export async function saveCapture(env: Env, capture: CaptureResult): Promise<{stored:StoredCapture;cached:boolean}> {
   let canonical: string;
-  try { canonical = normalizeUrl(capture.article.canonicalUrl); } catch { canonical = normalizeUrl(capture.article.url); }
+  const requested=normalizeUrl(capture.article.url);
+  canonical=requested;
+  try {
+    const candidate=normalizeUrl(capture.article.canonicalUrl);
+    if(new URL(candidate).hostname.replace(/^www\./,'')===new URL(requested).hostname.replace(/^www\./,''))canonical=candidate;
+  }catch{/* Ignore unsafe and cross-origin canonical metadata. */}
+  const source=capture.attempts.some(attempt=>attempt.strategy==='import')?'import' as const:'fetch' as const;
   const article = { ...capture.article, canonicalUrl: canonical };
-  const hash = await sha256(JSON.stringify({title:article.title,byline:article.byline,publishedAt:article.publishedAt,content:article.content}));
+  const hash = await sha256(JSON.stringify({source,title:article.title,byline:article.byline,publishedAt:article.publishedAt,content:article.content}));
   const previous = await env.DB.prepare('SELECT id FROM snapshots WHERE canonical_url=? AND content_hash=?').bind(canonical,hash).first<{id:string}>();
   if (previous) {
     const stored = await getSnapshot(env,previous.id);
@@ -62,7 +68,7 @@ export async function saveCapture(env: Env, capture: CaptureResult): Promise<{st
   const id = crypto.randomUUID().replace(/-/g,'').slice(0,24);
   const objectKey = `snapshots/${id}.json`;
   const snapshot: Snapshot = {
-    id, url: article.url, canonicalUrl: canonical, title:article.title, siteName:article.siteName, byline:article.byline,
+    source, id, url: article.url, canonicalUrl: canonical, title:article.title, siteName:article.siteName, byline:article.byline,
     capturedAt:new Date().toISOString(), publishedAt:article.publishedAt, contentHash:hash, wordCount:article.wordCount,
     quality:article.quality, extractionMethod:article.extractionMethod, objectKey
   };
@@ -71,8 +77,8 @@ export async function saveCapture(env: Env, capture: CaptureResult): Promise<{st
   try {
     await env.ARCHIVE.put(objectKey,JSON.stringify(stored),{httpMetadata:{contentType:'application/json'}});
     await env.DB.batch([
-      env.DB.prepare('INSERT OR IGNORE INTO snapshots(id,url,canonical_url,title,site_name,byline,captured_at,published_at,content_hash,word_count,quality,extraction_method,object_key) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)')
-        .bind(id,article.url,canonical,article.title,article.siteName,article.byline,snapshot.capturedAt,article.publishedAt,hash,article.wordCount,article.quality,article.extractionMethod,objectKey),
+      env.DB.prepare('INSERT OR IGNORE INTO snapshots(id,url,canonical_url,title,site_name,byline,captured_at,published_at,content_hash,word_count,quality,extraction_method,object_key,source) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)')
+        .bind(id,article.url,canonical,article.title,article.siteName,article.byline,snapshot.capturedAt,article.publishedAt,hash,article.wordCount,article.quality,article.extractionMethod,objectKey,source),
       env.DB.prepare("INSERT INTO snapshots_fts(rowid,title,site_name,excerpt,url) SELECT rowid,title,site_name,?,url || ' ' || canonical_url FROM snapshots WHERE id=?").bind(article.textContent,id)
     ]);
   } catch (error) { await env.ARCHIVE.delete([objectKey,...stored.mediaKeys ?? []]).catch(()=>{}); throw error; }
@@ -88,12 +94,18 @@ export async function saveCapture(env: Env, capture: CaptureResult): Promise<{st
 export async function deleteSnapshot(env:Env,id:string):Promise<boolean> {
   if (!/^[a-f0-9]{24}$/.test(id)) return false;
   const row = await env.DB.prepare('SELECT object_key FROM snapshots WHERE id=?').bind(id).first<{object_key:string}>();
-  if (!row) return false;
-  const stored=await getSnapshot(env,id);
-  await env.DB.batch([
-    env.DB.prepare('DELETE FROM snapshots_fts WHERE rowid=(SELECT rowid FROM snapshots WHERE id=?)').bind(id),
-    env.DB.prepare('DELETE FROM snapshots WHERE id=?').bind(id)
-  ]);
-  await env.ARCHIVE.delete([row.object_key,...stored?.mediaKeys ?? []]);
+  if (row) {
+    const stored=await getSnapshot(env,id);
+    const keys=[row.object_key,...stored?.mediaKeys ?? []];
+    await env.DB.batch([
+      env.DB.prepare('INSERT OR REPLACE INTO pending_deletions(id,object_keys,created_at) VALUES(?,?,?)').bind(id,JSON.stringify(keys),new Date().toISOString()),
+      env.DB.prepare('DELETE FROM snapshots_fts WHERE rowid=(SELECT rowid FROM snapshots WHERE id=?)').bind(id),
+      env.DB.prepare('DELETE FROM snapshots WHERE id=?').bind(id)
+    ]);
+  }
+  const pending=await env.DB.prepare('SELECT object_keys FROM pending_deletions WHERE id=?').bind(id).first<{object_keys:string}>();
+  if(!pending)return false;
+  await env.ARCHIVE.delete(JSON.parse(pending.object_keys) as string[]);
+  await env.DB.prepare('DELETE FROM pending_deletions WHERE id=?').bind(id).run();
   return true;
 }

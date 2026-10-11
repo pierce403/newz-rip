@@ -17,7 +17,7 @@ async function route(request:Request,env:Env,ctx:ExecutionContext):Promise<Respo
   const url=new URL(request.url);const path=url.pathname;const appName=env.APP_NAME ?? 'newz.rip';
   const read=request.method==='GET'||request.method==='HEAD';
   if(read && path==='/api/health') {
-    const ready=await env.DB.prepare('SELECT count(*) AS count FROM snapshots').first<{count:number}>();
+    const ready=await env.DB.prepare("SELECT count(*) AS count FROM snapshots WHERE source IN ('fetch','import')").first<{count:number}>();
     return Response.json({ok:!!ready,archive:env.ARCHIVE_PUBLIC!=='false'?'public':'private',captureProtected:!!env.CAPTURE_TOKEN,browser:env.ALLOW_BROWSER_RENDERING==='true'&&!!env.BROWSER});
   }
   if(read && path==='/') {
@@ -55,7 +55,7 @@ async function route(request:Request,env:Env,ctx:ExecutionContext):Promise<Respo
       const format=url.searchParams.get('format')??'html';
       const filename=stored.article.title.replace(/[^a-z0-9_-]+/gi,'-').slice(0,80)||'article';
       let body:string;let contentType:string;let extension:string;
-      if(format==='json'){body=JSON.stringify(stored,null,2);contentType='application/json';extension='json';}
+      if(format==='json'){const {rawHtml:_raw,...safeExport}=stored;body=JSON.stringify(safeExport,null,2);contentType='application/json';extension='json';}
       else if(format==='md'){body=articleMarkdown(stored);contentType='text/markdown; charset=utf-8';extension='md';}
       else if(format==='txt'){body=`${stored.article.title}\n${stored.article.byline ?? stored.article.siteName}\n${stored.snapshot.url}\nCaptured ${stored.snapshot.capturedAt}\n\n${stored.article.textContent}\n`;contentType='text/plain; charset=utf-8';extension='txt';}
       else if(format==='html'){body=await exportHtml(stored,env);contentType='text/html; charset=utf-8';extension='html';}

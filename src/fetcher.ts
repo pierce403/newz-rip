@@ -118,7 +118,7 @@ export async function fetchArticle(input: string, env: Partial<Env> = {}, option
     const started = Date.now();
     try {
       const available = new URL('https://archive.org/wayback/available'); available.searchParams.set('url', original);
-      const response = await (options.fetcher ?? fetch)(available, { redirect: 'error', signal: AbortSignal.timeout(Math.min(5000, deadline - Date.now())) });
+      const response = await (options.fetcher ?? fetch)(available, { redirect: 'manual', signal: AbortSignal.timeout(Math.min(5000, deadline - Date.now())) });
       if (!response.ok) throw new Error('No snapshot metadata');
       const data = JSON.parse(await readBounded(response, 65536)) as { archived_snapshots?: { closest?: { available: boolean; url: string; timestamp: string } } };
       const closest = data.archived_snapshots?.closest;

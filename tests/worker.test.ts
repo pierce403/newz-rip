@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { Miniflare } from 'miniflare';
-import { readFileSync } from 'node:fs';
+import { Miniflare, Response as RuntimeResponse, Request as RuntimeRequest } from 'miniflare';
+import { readFileSync, readdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { build } from 'esbuild';
 
@@ -15,9 +15,14 @@ async function save(extra:Record<string,unknown>={}){
 beforeAll(async()=>{
   await build({entryPoints:['web/app.ts'],bundle:true,format:'esm',outfile:'public/app.js'});
   execFileSync(process.execPath,['node_modules/wrangler/bin/wrangler.js','deploy','--dry-run','--outdir','.wrangler/test-build'],{env:{...process.env,WRANGLER_SEND_METRICS:'false'},stdio:'pipe'});
-  worker=new Miniflare({modules:true,scriptPath:'.wrangler/test-build/index.js',compatibilityDate:'2026-08-06',compatibilityFlags:['nodejs_compat'],d1Databases:{DB:'test-db'},r2Buckets:{ARCHIVE:'test-archive'},bindings:{APP_NAME:'newz.rip',ARCHIVE_IMAGES:'false',ALLOW_WAYBACK:'false'}});
+  worker=new Miniflare({modules:true,scriptPath:'.wrangler/test-build/index.js',compatibilityDate:'2026-08-06',compatibilityFlags:['nodejs_compat'],d1Databases:{DB:'test-db'},r2Buckets:{ARCHIVE:'test-archive'},bindings:{APP_NAME:'newz.rip',ARCHIVE_IMAGES:'false',ALLOW_WAYBACK:'false'},outboundService:async (request:RuntimeRequest)=>{
+    const url=new URL(request.url);
+    if(url.hostname==='cloudflare-dns.com')return RuntimeResponse.json({Status:0,Answer:[{type:1,data:'8.8.8.8'}]});
+    if(url.hostname==='news.example.com')return new RuntimeResponse(sourceHtml(),{headers:{'content-type':'text/html; charset=utf-8'}});
+    return new RuntimeResponse('Unexpected outbound request',{status:502});
+  }});
   const db=await worker.getD1Database('DB');
-  const migration=readFileSync('migrations/0001_archive.sql','utf8');
+  const migration=readdirSync('migrations').filter(p=>p.endsWith('.sql')).sort().map(p=>readFileSync('migrations/'+p,'utf8')).join('\n');
   for(const statement of migration.split(';').map(s=>s.trim()).filter(Boolean))await db.prepare(statement).run();
 },60000);
 afterAll(async()=>{await worker?.dispose();});
@@ -36,6 +41,19 @@ describe('real Workers + D1 + R2 archive',()=>{
     const saved=await call('/s/'+snapshotId);expect(saved.status).toBe(200);expect(await saved.text()).toContain('Example local news story');
     const bucket=await worker.getR2Bucket('ARCHIVE');expect(await bucket.head(`snapshots/${snapshotId}.json`)).not.toBeNull();
   });
+  it('uses supported Workers redirects for real outbound DNS/article fetches and avoids imported cache poisoning',async()=>{
+    const imported=await save({url:'https://news.example.com/story',html:sourceHtml().replaceAll('Example local news story','Forged imported headline')});
+    expect(imported.status).toBe(200);
+    const response=await call('/api/capture',{method:'POST',headers:{'content-type':'application/json','CF-Connecting-IP':'203.0.113.66'},body:JSON.stringify({url:'https://news.example.com/story'})});
+    expect(response.status).toBe(200);
+    const result=await response.json() as {snapshot:{source:string};article:{title:string};attempts:{strategy:string}[]};
+    expect(result.snapshot.source).toBe('fetch');expect(result.article.title).toBe('Example local news story');expect(result.attempts[0].strategy).toBe('googlebot');
+  });
+  it('does not let cross-origin canonical metadata claim another publisher URL',async()=>{
+    const response=await save({url:'https://evil.example.com/forged',html:sourceHtml().replace('</head>','<link rel="canonical" href="https://www.nytimes.com/real-story"></head>')});
+    expect(response.status).toBe(200);const result=await response.json() as {snapshot:{canonicalUrl:string}};
+    expect(result.snapshot.canonicalUrl).toBe('https://evil.example.com/forged');
+  });
   it('deduplicates an identical body while preserving the first timestamp',async()=>{
     const first=await call('/api/snapshots/'+snapshotId);const original=await first.json() as {snapshot:{capturedAt:string}};
     const repeated=await save();const result=await repeated.json() as {snapshot:{id:string;capturedAt:string};cached:boolean};
@@ -52,7 +70,8 @@ describe('real Workers + D1 + R2 archive',()=>{
   it.each(['html','json','md','txt'])('exports %s without executing archived source',async format=>{
     const response=await call(`/s/${snapshotId}/download?format=${format}`);expect(response.status).toBe(200);
     expect(response.headers.get('content-disposition')).toContain('attachment');const text=await response.text();expect(text).toContain('Example local news story');
-    if(format==='html')expect(text).not.toContain("alert('danger')");
+    if(format==='html'||format==='json')expect(text).not.toContain("alert('danger')");
+    if(format==='json')expect(JSON.parse(text)).not.toHaveProperty('rawHtml');
   });
   it('rejects private URLs, malformed JSON, bad content types and cross-origin writes',async()=>{
     expect((await save({url:'http://127.0.0.1/'})).status).toBe(400);
@@ -77,7 +96,7 @@ describe('real Workers + D1 + R2 archive',()=>{
     const protectedWorker=new Miniflare({modules:true,scriptPath:'.wrangler/test-build/index.js',compatibilityDate:'2026-08-06',compatibilityFlags:['nodejs_compat'],d1Databases:{DB:'protected-db'},r2Buckets:{ARCHIVE:'protected-archive'},bindings:{ARCHIVE_IMAGES:'false',CAPTURE_TOKEN:'capture-test-token',ADMIN_TOKEN:'admin-test-token',ARCHIVE_PUBLIC:'false'}});
     try {
       const db=await protectedWorker.getD1Database('DB');
-      for(const statement of readFileSync('migrations/0001_archive.sql','utf8').split(';').map(s=>s.trim()).filter(Boolean))await db.prepare(statement).run();
+      for(const statement of readdirSync('migrations').filter(p=>p.endsWith('.sql')).sort().map(p=>readFileSync('migrations/'+p,'utf8')).join('\n').split(';').map(s=>s.trim()).filter(Boolean))await db.prepare(statement).run();
       const endpoint='https://private.example.com';
       expect((await protectedWorker.dispatchFetch(endpoint+'/api/import',{method:'POST',headers:{'content-type':'application/json'},body:'{}'})).status).toBe(401);
       expect((await protectedWorker.dispatchFetch(endpoint+'/api/capture',{method:'POST',headers:{'content-type':'application/json',Authorization:'Bearer capture-test-token'},body:JSON.stringify({url:'https://example.com/private-story'})})).status).toBe(401);

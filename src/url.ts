@@ -56,7 +56,7 @@ export async function assertPublicDns(url: URL, fetcher: typeof fetch = fetch, s
   const responses = await Promise.all([1,28].map(async type => {
     const query = new URL('https://cloudflare-dns.com/dns-query');
     query.searchParams.set('name', url.hostname); query.searchParams.set('type', String(type));
-    const response = await fetcher(query, { headers: { Accept: 'application/dns-json' }, redirect: 'error', signal });
+    const response = await fetcher(query, { headers: { Accept: 'application/dns-json' }, redirect: 'manual', signal });
     if (!response.ok) throw new AppError('DNS validation is temporarily unavailable. Try again shortly.', 502, 'dns_failed');
     const text = await response.text();
     if (text.length > 65536) throw new AppError('Invalid DNS response.', 502, 'dns_failed');

@@ -78,11 +78,33 @@ schemes are removed. Links and image references are resolved against the source
 URL and common local/private literal targets are rejected. Publisher markup is
 never trusted just because it came from a known domain.
 
-Article images remain external references. Viewing them can contact the original
+Up to four raster article images are preserved in private R2 storage after public URL/DNS, MIME, signature and bounded-size checks. Unpreserved article images remain external references. Viewing them can contact the original
 image/CDN host and disclose the reader's IP; `referrerpolicy="no-referrer"` avoids
 sending the archive URL. Image hostname resolution in the reader's browser is not
 covered by server-side DNS validation. A strict privacy or network-isolation
 deployment should remove images or use a separately hardened image proxy.
+
+## Authorization and provenance
+
+Private archive mode requires the archive's master bearer token for reads,
+captures and imports. Capture requests can return existing editions, so they
+cannot use a weaker write-only token in private mode. Public mode may separately
+restrict captures using CAPTURE_TOKEN. Administrator deletion always requires
+ADMIN_TOKEN. Cross-origin writes are rejected; secrets never appear in URLs.
+
+Imported snapshots have distinct provenance and do not satisfy the live-fetch
+cache. Cross-origin canonical metadata is ignored for storage/cache identity;
+only the requested hostname's exact www/apex alias is accepted. Imports are
+explicitly disclosed to readers, rather than asserting direct publisher origin.
+
+Original source HTML is retained only as data inside the private R2 snapshot.
+Public API responses and JSON/HTML/text/Markdown exports omit raw source HTML,
+which can contain publisher script state or account/session details in imported
+pages. Keep the bucket private. Rendered reader content is always sanitized.
+
+Deletion removes the searchable edition and retains a durable list of R2 objects
+until deletion succeeds. Repeating the same authorized DELETE finishes a failed
+cleanup. Capture storage failures also clean up already-preserved media.
 
 ## References
 

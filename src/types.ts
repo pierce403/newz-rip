@@ -47,6 +47,7 @@ export interface CaptureResult {
   rawHtml: string;
 }
 export interface Snapshot {
+  source?: 'fetch' | 'import';
   id: string;
   url: string;
   canonicalUrl: string;
