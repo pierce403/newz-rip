@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS snapshots (
 );
 CREATE INDEX IF NOT EXISTS snapshots_url ON snapshots(canonical_url, captured_at DESC);
 CREATE INDEX IF NOT EXISTS snapshots_recent ON snapshots(captured_at DESC);
-CREATE VIRTUAL TABLE IF NOT EXISTS snapshots_fts USING fts5(title, site_name, excerpt, content='');
+CREATE VIRTUAL TABLE IF NOT EXISTS snapshots_fts USING fts5(title, site_name, excerpt, url);
 CREATE TABLE IF NOT EXISTS rate_limits (
   key TEXT PRIMARY KEY,
   window_start INTEGER NOT NULL,
