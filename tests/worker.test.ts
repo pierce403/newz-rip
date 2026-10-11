@@ -107,6 +107,12 @@ describe('real Workers + D1 + R2 archive',()=>{
       expect((await protectedWorker.dispatchFetch(endpoint+'/api/snapshots/'+snapshot.id,{method:'DELETE',headers:{Authorization:'Bearer capture-test-token'}})).status).toBe(401);
       expect((await protectedWorker.dispatchFetch(endpoint+'/api/snapshots/'+snapshot.id,{method:'DELETE',headers:{Authorization:'Bearer admin-test-token'}})).status).toBe(200);
       expect(await (await protectedWorker.getR2Bucket('ARCHIVE')).head(snapshot.objectKey)).toBeNull();
+      const retryId='d'.repeat(24);const retryKey='snapshots/'+retryId+'.json';
+      const bucket=await protectedWorker.getR2Bucket('ARCHIVE');await bucket.put(retryKey,'orphaned payload');
+      await db.prepare('INSERT INTO pending_deletions(id,object_keys,created_at) VALUES(?,?,?)').bind(retryId,JSON.stringify([retryKey]),new Date().toISOString()).run();
+      expect((await protectedWorker.dispatchFetch(endpoint+'/api/snapshots/'+retryId,{method:'DELETE',headers:{Authorization:'Bearer admin-test-token'}})).status).toBe(200);
+      expect(await bucket.head(retryKey)).toBeNull();
+      expect(await db.prepare('SELECT id FROM pending_deletions WHERE id=?').bind(retryId).first()).toBeNull();
     }finally{await protectedWorker.dispose();}
   });
   it('supports prefixed links and shared text',async()=>{

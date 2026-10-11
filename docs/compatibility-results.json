@@ -1,0 +1,996 @@
+{
+  "evaluatedAt": "2026-10-11T05:48:48.735Z",
+  "mode": "direct-fetcher",
+  "base": null,
+  "nodeVersion": "v24.19.0",
+  "dnsValidation": true,
+  "wayback": true,
+  "completenessVerified": false,
+  "limitations": [
+    "A full_candidate is an extraction heuristic with a matching headline, not a proven complete or unlocked article.",
+    "One article per publisher does not establish publisher-wide support.",
+    "Direct Node results do not establish Cloudflare deployment compatibility; repeat with --base on the deployed Worker.",
+    "Network errors may originate from the test environment, DNS validation, publisher, or archive provider.",
+    "Capture API mode creates real saved snapshots and uses the server fallback configuration."
+  ],
+  "updatedAt": "2026-10-11T05:57:32.451Z",
+  "attempted": 31,
+  "planned": 31,
+  "summary": {
+    "full_candidate": 26,
+    "partial": 2,
+    "wrong_article": 0,
+    "blocked": 3,
+    "network_error": 0,
+    "error": 0
+  },
+  "results": [
+    {
+      "publisher": "The Guardian",
+      "url": "https://www.theguardian.com/world/2024/sep/22/russia-isolated-at-un-summit-after-surprise-bid-to-derail-pact",
+      "category": "international",
+      "evaluatedAt": "2026-10-11T05:48:48.735Z",
+      "durationMs": 6448,
+      "outcome": "full_candidate",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://www.theguardian.com/world/2024/sep/22/russia-isolated-at-un-summit-after-surprise-bid-to-derail-pact",
+          "status": "success",
+          "httpStatus": 200,
+          "message": "Readable article found.",
+          "durationMs": 6444
+        }
+      ],
+      "title": "Russia isolated at UN summit after surprise bid to derail pact",
+      "titleMatch": 1,
+      "wordCount": 888,
+      "paragraphCount": 17,
+      "extractionMethod": "generic",
+      "quality": "full",
+      "canonicalUrl": "https://www.theguardian.com/world/2024/sep/22/russia-isolated-at-un-summit-after-surprise-bid-to-derail-pact",
+      "warnings": []
+    },
+    {
+      "publisher": "Associated Press",
+      "url": "https://apnews.com/article/spacex-nasa-space-station-3d4ca5874f95fe94afc037b2443f184c",
+      "category": "us-wire",
+      "evaluatedAt": "2026-10-11T05:48:55.185Z",
+      "durationMs": 3112,
+      "outcome": "full_candidate",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://apnews.com/article/spacex-nasa-space-station-3d4ca5874f95fe94afc037b2443f184c",
+          "status": "success",
+          "httpStatus": 200,
+          "message": "Readable article found.",
+          "durationMs": 3112
+        }
+      ],
+      "title": "Four astronauts return to Earth after eight months in space",
+      "titleMatch": 1,
+      "wordCount": 867,
+      "paragraphCount": 23,
+      "extractionMethod": "generic",
+      "quality": "full",
+      "canonicalUrl": "https://apnews.com/article/spacex-nasa-space-station-3d4ca5874f95fe94afc037b2443f184c",
+      "warnings": []
+    },
+    {
+      "publisher": "Reuters",
+      "url": "https://www.reuters.com/business/autos-transportation/tesla-renames-full-self-driving-assisted-driving-europe-it-chases-clearance-2026-10-09/",
+      "category": "international-wire",
+      "evaluatedAt": "2026-10-11T05:48:58.299Z",
+      "durationMs": 5928,
+      "outcome": "full_candidate",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://www.reuters.com/business/autos-transportation/tesla-renames-full-self-driving-assisted-driving-europe-it-chases-clearance-2026-10-09/",
+          "status": "failed",
+          "message": "The publisher returned HTTP 401.",
+          "durationMs": 2801
+        },
+        {
+          "strategy": "standard",
+          "url": "https://www.reuters.com/business/autos-transportation/tesla-renames-full-self-driving-assisted-driving-europe-it-chases-clearance-2026-10-09/",
+          "status": "success",
+          "httpStatus": 200,
+          "message": "Readable article found.",
+          "durationMs": 3126
+        }
+      ],
+      "title": "Tesla renames 'Full Self-Driving' to 'Assisted Driving' in Europe as it chases clearance for software",
+      "titleMatch": 1,
+      "wordCount": 398,
+      "paragraphCount": 15,
+      "extractionMethod": "readability",
+      "quality": "full",
+      "canonicalUrl": "https://www.reuters.com/business/autos-transportation/tesla-renames-full-self-driving-assisted-driving-europe-it-chases-clearance-2026-10-09/",
+      "warnings": [
+        "The page includes subscription controls; completeness cannot be independently verified."
+      ]
+    },
+    {
+      "publisher": "Washington Post",
+      "url": "https://www.washingtonpost.com/technology/2026/10/09/anthropic-discloses-incidents-its-ai-models-misusing-government-sites/",
+      "category": "subscription",
+      "evaluatedAt": "2026-10-11T05:49:04.227Z",
+      "durationMs": 3035,
+      "outcome": "full_candidate",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://www.washingtonpost.com/technology/2026/10/09/anthropic-discloses-incidents-its-ai-models-misusing-government-sites/",
+          "status": "success",
+          "httpStatus": 200,
+          "message": "Readable article found.",
+          "durationMs": 3034
+        }
+      ],
+      "title": "Anthropic AI agents took ‘unintended’ actions on government sites",
+      "titleMatch": 1,
+      "wordCount": 689,
+      "paragraphCount": 19,
+      "extractionMethod": "publisher",
+      "quality": "full",
+      "canonicalUrl": "https://www.washingtonpost.com/technology/2026/10/09/anthropic-discloses-incidents-its-ai-models-misusing-government-sites/",
+      "warnings": [
+        "The page includes subscription controls; completeness cannot be independently verified."
+      ]
+    },
+    {
+      "publisher": "Wall Street Journal",
+      "url": "https://www.wsj.com/us-news/yosemite-kingsbarn-realty-capital-08ea0831",
+      "category": "hard-wall",
+      "evaluatedAt": "2026-10-11T05:53:31.952Z",
+      "durationMs": 18264,
+      "outcome": "partial",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://www.wsj.com/us-news/yosemite-kingsbarn-realty-capital-08ea0831",
+          "status": "failed",
+          "message": "The request timed out or could not reach the publisher.",
+          "durationMs": 7001
+        },
+        {
+          "strategy": "standard",
+          "url": "https://www.wsj.com/us-news/yosemite-kingsbarn-realty-capital-08ea0831",
+          "status": "partial",
+          "httpStatus": 200,
+          "message": "Only a partial article was available.",
+          "durationMs": 6123
+        },
+        {
+          "strategy": "mobile",
+          "url": "https://www.wsj.com/us-news/yosemite-kingsbarn-realty-capital-08ea0831",
+          "status": "failed",
+          "message": "The publisher returned HTTP 401.",
+          "durationMs": 126
+        },
+        {
+          "strategy": "wayback",
+          "url": "https://www.wsj.com/us-news/yosemite-kingsbarn-realty-capital-08ea0831",
+          "status": "failed",
+          "message": "Internet Archive lookup was unavailable.",
+          "durationMs": 5001
+        }
+      ],
+      "title": "One Acre of Yosemite Has Kicked Off a Battle Over the Future of National Parks",
+      "titleMatch": 1,
+      "wordCount": 197,
+      "paragraphCount": 6,
+      "extractionMethod": "generic",
+      "quality": "partial",
+      "canonicalUrl": "https://www.wsj.com/us-news/yosemite-kingsbarn-realty-capital-08ea0831",
+      "warnings": [
+        "The publisher response appears to contain only part of the article. Missing text cannot be reconstructed.",
+        "The page includes subscription controls; completeness cannot be independently verified.",
+        "The publisher supplied encoded or encrypted article data. Only readable text present in the response is available."
+      ]
+    },
+    {
+      "publisher": "Financial Times",
+      "url": "https://www.ft.com/content/e5fd2655-f95f-4183-9dd9-b3c1ebe67a6b",
+      "category": "hard-wall",
+      "evaluatedAt": "2026-10-11T05:49:13.919Z",
+      "durationMs": 16515,
+      "outcome": "partial",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://www.ft.com/content/e5fd2655-f95f-4183-9dd9-b3c1ebe67a6b",
+          "status": "partial",
+          "httpStatus": 200,
+          "message": "Only a partial article was available.",
+          "durationMs": 4720
+        },
+        {
+          "strategy": "standard",
+          "url": "https://www.ft.com/content/e5fd2655-f95f-4183-9dd9-b3c1ebe67a6b",
+          "status": "failed",
+          "message": "The publisher returned HTTP 403.",
+          "durationMs": 3148
+        },
+        {
+          "strategy": "mobile",
+          "url": "https://www.ft.com/content/e5fd2655-f95f-4183-9dd9-b3c1ebe67a6b",
+          "status": "failed",
+          "message": "The publisher returned HTTP 403.",
+          "durationMs": 3639
+        },
+        {
+          "strategy": "wayback",
+          "url": "https://www.ft.com/content/e5fd2655-f95f-4183-9dd9-b3c1ebe67a6b",
+          "status": "failed",
+          "message": "Internet Archive lookup was unavailable.",
+          "durationMs": 5001
+        }
+      ],
+      "title": "Inside the ‘robot gyms’ training machines for the real world",
+      "titleMatch": 1,
+      "wordCount": 372,
+      "paragraphCount": 9,
+      "extractionMethod": "generic",
+      "quality": "partial",
+      "canonicalUrl": "https://www.ft.com/content/e5fd2655-f95f-4183-9dd9-b3c1ebe67a6b",
+      "warnings": [
+        "The publisher response appears to contain only part of the article. Missing text cannot be reconstructed.",
+        "The page includes subscription controls; completeness cannot be independently verified."
+      ]
+    },
+    {
+      "publisher": "Bloomberg",
+      "url": "https://www.bloomberg.com/news/articles/2026-03-18/is-an-ai-bubble-set-to-burst-navigating-the-artificial-intelligence-boom",
+      "category": "hard-wall",
+      "evaluatedAt": "2026-10-11T05:49:30.435Z",
+      "durationMs": 16564,
+      "outcome": "blocked",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://www.bloomberg.com/news/articles/2026-03-18/is-an-ai-bubble-set-to-burst-navigating-the-artificial-intelligence-boom",
+          "status": "failed",
+          "message": "The publisher returned HTTP 403.",
+          "durationMs": 5556
+        },
+        {
+          "strategy": "standard",
+          "url": "https://www.bloomberg.com/news/articles/2026-03-18/is-an-ai-bubble-set-to-burst-navigating-the-artificial-intelligence-boom",
+          "status": "failed",
+          "message": "The publisher returned HTTP 403.",
+          "durationMs": 3109
+        },
+        {
+          "strategy": "mobile",
+          "url": "https://www.bloomberg.com/news/articles/2026-03-18/is-an-ai-bubble-set-to-burst-navigating-the-artificial-intelligence-boom",
+          "status": "failed",
+          "message": "The publisher returned HTTP 403.",
+          "durationMs": 2898
+        },
+        {
+          "strategy": "wayback",
+          "url": "https://www.bloomberg.com/news/articles/2026-03-18/is-an-ai-bubble-set-to-burst-navigating-the-artificial-intelligence-boom",
+          "status": "failed",
+          "message": "Internet Archive lookup was unavailable.",
+          "durationMs": 5001
+        }
+      ],
+      "error": "The publisher did not provide a readable article. Try an existing archive or import a saved HTML page.",
+      "errorCode": "article_unavailable"
+    },
+    {
+      "publisher": "CBS News",
+      "url": "https://www.cbsnews.com/news/doj-investigating-tv-networks-suspension-press-pool-trump-media-ban/",
+      "category": "us-general",
+      "evaluatedAt": "2026-10-11T05:49:47.001Z",
+      "durationMs": 6735,
+      "outcome": "full_candidate",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://www.cbsnews.com/news/doj-investigating-tv-networks-suspension-press-pool-trump-media-ban/",
+          "status": "success",
+          "httpStatus": 200,
+          "message": "Readable article found.",
+          "durationMs": 6735
+        }
+      ],
+      "title": "Justice Department investigating TV networks over suspension of press pool after Trump media ban",
+      "titleMatch": 1,
+      "wordCount": 482,
+      "paragraphCount": 15,
+      "extractionMethod": "publisher",
+      "quality": "full",
+      "canonicalUrl": "https://www.cbsnews.com/news/doj-investigating-tv-networks-suspension-press-pool-trump-media-ban/",
+      "warnings": []
+    },
+    {
+      "publisher": "ABC News",
+      "url": "https://abcnews.com/Entertainment/zodiac-marvel-zombies-marvel-studios-showed-nycc-2026/story?id=137129744",
+      "category": "us-general",
+      "evaluatedAt": "2026-10-11T05:49:53.753Z",
+      "durationMs": 3834,
+      "outcome": "full_candidate",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://abcnews.com/Entertainment/zodiac-marvel-zombies-marvel-studios-showed-nycc-2026/story?id=137129744",
+          "status": "success",
+          "httpStatus": 200,
+          "message": "Readable article found.",
+          "durationMs": 3833
+        }
+      ],
+      "title": "'Zodiac,' 'Marvel Zombies' and more: What Marvel Studios showed at NYCC 2026",
+      "titleMatch": 1,
+      "wordCount": 472,
+      "paragraphCount": 21,
+      "extractionMethod": "readability",
+      "quality": "full",
+      "canonicalUrl": "https://abcnews.com/Entertainment/zodiac-marvel-zombies-marvel-studios-showed-nycc-2026/story?id=137129744",
+      "warnings": []
+    },
+    {
+      "publisher": "Axios",
+      "url": "https://www.axios.com/2026/10/10/trump-zelensky-putin-diesel-deal-war",
+      "category": "us-general",
+      "evaluatedAt": "2026-10-11T05:49:57.588Z",
+      "durationMs": 3966,
+      "outcome": "full_candidate",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://www.axios.com/2026/10/10/trump-zelensky-putin-diesel-deal-war",
+          "status": "success",
+          "httpStatus": 200,
+          "message": "Readable article found.",
+          "durationMs": 3965
+        }
+      ],
+      "title": "U.S. official: Trump cut deal with Putin after Zelensky ignored his requests",
+      "titleMatch": 1,
+      "wordCount": 777,
+      "paragraphCount": 10,
+      "extractionMethod": "readability",
+      "quality": "full",
+      "canonicalUrl": "https://www.axios.com/2026/10/10/trump-zelensky-putin-diesel-deal-war",
+      "warnings": [
+        "The page includes subscription controls; completeness cannot be independently verified."
+      ]
+    },
+    {
+      "publisher": "Al Jazeera",
+      "url": "https://www.aljazeera.com/news/2026/10/10/who-says-no-plague-case-registered-after-russian-lab-workers-death",
+      "category": "international",
+      "evaluatedAt": "2026-10-11T05:50:01.560Z",
+      "durationMs": 2926,
+      "outcome": "full_candidate",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://www.aljazeera.com/news/2026/10/10/who-says-no-plague-case-registered-after-russian-lab-workers-death",
+          "status": "success",
+          "httpStatus": 200,
+          "message": "Readable article found.",
+          "durationMs": 2926
+        }
+      ],
+      "title": "WHO says no plague case registered after Russian lab worker’s death",
+      "titleMatch": 1,
+      "wordCount": 442,
+      "paragraphCount": 16,
+      "extractionMethod": "publisher",
+      "quality": "full",
+      "canonicalUrl": "https://www.aljazeera.com/news/2026/10/10/who-says-no-plague-case-registered-after-russian-lab-workers-death",
+      "warnings": []
+    },
+    {
+      "publisher": "Ars Technica",
+      "url": "https://arstechnica.com/gadgets/2026/10/a-cray-1-supercomputer-replica-from-30-obsolete-mac-minis/",
+      "category": "technology",
+      "evaluatedAt": "2026-10-11T05:50:04.487Z",
+      "durationMs": 4422,
+      "outcome": "full_candidate",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://arstechnica.com/gadgets/2026/10/a-cray-1-supercomputer-replica-from-30-obsolete-mac-minis/",
+          "status": "success",
+          "httpStatus": 200,
+          "message": "Readable article found.",
+          "durationMs": 4422
+        }
+      ],
+      "title": "A Cray-1 supercomputer replica from 30 \"obsolete\" Mac Minis",
+      "titleMatch": 1,
+      "wordCount": 1001,
+      "paragraphCount": 11,
+      "extractionMethod": "publisher",
+      "quality": "full",
+      "canonicalUrl": "https://arstechnica.com/gadgets/2026/10/a-cray-1-supercomputer-replica-from-30-obsolete-mac-minis/",
+      "warnings": [
+        "The page includes subscription controls; completeness cannot be independently verified."
+      ]
+    },
+    {
+      "publisher": "The Verge",
+      "url": "https://www.theverge.com/ai-artificial-intelligence/1009051/privacy-ai-agent-promises-openai-meta-muse-dots",
+      "category": "technology-subscription",
+      "evaluatedAt": "2026-10-11T05:50:08.911Z",
+      "durationMs": 9752,
+      "outcome": "full_candidate",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://www.theverge.com/ai-artificial-intelligence/1009051/privacy-ai-agent-promises-openai-meta-muse-dots",
+          "status": "failed",
+          "message": "The request timed out or could not reach the publisher.",
+          "durationMs": 7001
+        },
+        {
+          "strategy": "standard",
+          "url": "https://www.theverge.com/ai-artificial-intelligence/1009051/privacy-ai-agent-promises-openai-meta-muse-dots",
+          "status": "success",
+          "httpStatus": 200,
+          "message": "Readable article found.",
+          "durationMs": 2750
+        }
+      ],
+      "title": "AI agent makers are promising privacy — will they deliver?",
+      "titleMatch": 1,
+      "wordCount": 840,
+      "paragraphCount": 9,
+      "extractionMethod": "json-ld",
+      "quality": "full",
+      "canonicalUrl": "https://www.theverge.com/ai-artificial-intelligence/1009051/privacy-ai-agent-promises-openai-meta-muse-dots",
+      "warnings": [
+        "The page includes subscription controls; completeness cannot be independently verified."
+      ]
+    },
+    {
+      "publisher": "WIRED",
+      "url": "https://www.wired.com/story/ai-is-getting-really-good-at-messing-with-cybercriminals/",
+      "category": "technology-subscription",
+      "evaluatedAt": "2026-10-11T05:50:18.690Z",
+      "durationMs": 4134,
+      "outcome": "full_candidate",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://www.wired.com/story/ai-is-getting-really-good-at-messing-with-cybercriminals/",
+          "status": "success",
+          "httpStatus": 200,
+          "message": "Readable article found.",
+          "durationMs": 4134
+        }
+      ],
+      "title": "AI Is Getting Really Good at Messing With Cybercriminals",
+      "titleMatch": 1,
+      "wordCount": 1446,
+      "paragraphCount": 15,
+      "extractionMethod": "generic",
+      "quality": "full",
+      "canonicalUrl": "https://www.wired.com/story/ai-is-getting-really-good-at-messing-with-cybercriminals/",
+      "warnings": [
+        "The page includes subscription controls; completeness cannot be independently verified."
+      ]
+    },
+    {
+      "publisher": "TechCrunch",
+      "url": "https://techcrunch.com/2026/10/08/google-releases-a-new-local-first-granola-competitor/",
+      "category": "technology",
+      "evaluatedAt": "2026-10-11T05:50:22.825Z",
+      "durationMs": 6236,
+      "outcome": "full_candidate",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://techcrunch.com/2026/10/08/google-releases-a-new-local-first-granola-competitor/",
+          "status": "success",
+          "httpStatus": 200,
+          "message": "Readable article found.",
+          "durationMs": 6236
+        }
+      ],
+      "title": "Google releases a new local-first Granola competitor | TechCrunch",
+      "titleMatch": 1,
+      "wordCount": 407,
+      "paragraphCount": 13,
+      "extractionMethod": "readability",
+      "quality": "full",
+      "canonicalUrl": "https://techcrunch.com/2026/10/08/google-releases-a-new-local-first-granola-competitor/",
+      "warnings": []
+    },
+    {
+      "publisher": "The Register",
+      "url": "https://www.theregister.com/security/2026/10/10/two-characters-open-up-a-world-of-typosquatting-opportunities-in-chromium-browsers/5302383",
+      "category": "technology",
+      "evaluatedAt": "2026-10-11T05:50:29.082Z",
+      "durationMs": 3211,
+      "outcome": "full_candidate",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://www.theregister.com/security/2026/10/10/two-characters-open-up-a-world-of-typosquatting-opportunities-in-chromium-browsers/5302383",
+          "status": "success",
+          "httpStatus": 200,
+          "message": "Readable article found.",
+          "durationMs": 3210
+        }
+      ],
+      "title": "Two characters open up a world of typosquatting opportunities in Chromium browsers",
+      "titleMatch": 1,
+      "wordCount": 1185,
+      "paragraphCount": 53,
+      "extractionMethod": "readability",
+      "quality": "full",
+      "canonicalUrl": "https://www.theregister.com/security/2026/10/10/two-characters-open-up-a-world-of-typosquatting-opportunities-in-chromium-browsers/5302383",
+      "warnings": [
+        "The page includes subscription controls; completeness cannot be independently verified."
+      ]
+    },
+    {
+      "publisher": "404 Media",
+      "url": "https://www.404media.co/scientists-detect-record-breaking-radio-signal-from-the-ancient-universe/",
+      "category": "technology-subscription",
+      "evaluatedAt": "2026-10-11T05:50:32.294Z",
+      "durationMs": 2826,
+      "outcome": "full_candidate",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://www.404media.co/scientists-detect-record-breaking-radio-signal-from-the-ancient-universe/",
+          "status": "success",
+          "httpStatus": 200,
+          "message": "Readable article found.",
+          "durationMs": 2826
+        }
+      ],
+      "title": "Scientists Detect Record-Breaking Radio Signal from the Ancient Universe",
+      "titleMatch": 1,
+      "wordCount": 1420,
+      "paragraphCount": 31,
+      "extractionMethod": "generic",
+      "quality": "full",
+      "canonicalUrl": "https://www.404media.co/scientists-detect-record-breaking-radio-signal-from-the-ancient-universe/",
+      "warnings": []
+    },
+    {
+      "publisher": "ProPublica",
+      "url": "https://www.propublica.org/article/tohono-oodham-nation-arizona-border-wall",
+      "category": "investigations",
+      "evaluatedAt": "2026-10-11T05:50:35.122Z",
+      "durationMs": 5539,
+      "outcome": "full_candidate",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://www.propublica.org/article/tohono-oodham-nation-arizona-border-wall",
+          "status": "failed",
+          "message": "The publisher returned HTTP 403.",
+          "durationMs": 2696
+        },
+        {
+          "strategy": "standard",
+          "url": "https://www.propublica.org/article/tohono-oodham-nation-arizona-border-wall",
+          "status": "success",
+          "httpStatus": 200,
+          "message": "Readable article found.",
+          "durationMs": 2843
+        }
+      ],
+      "title": "As Trump’s Wall Closes in, DHS Intimidates a Border Tribe With Surveillance, Masked Agents and Drones",
+      "titleMatch": 0.6666666666666666,
+      "wordCount": 4638,
+      "paragraphCount": 97,
+      "extractionMethod": "publisher",
+      "quality": "full",
+      "canonicalUrl": "https://www.propublica.org/article/tohono-oodham-nation-arizona-border-wall",
+      "warnings": []
+    },
+    {
+      "publisher": "Engadget",
+      "url": "https://www.engadget.com/2283091/anthropic-says-its-ai-agents-tried-to-break-into-government-websites/",
+      "category": "technology",
+      "evaluatedAt": "2026-10-11T05:50:40.666Z",
+      "durationMs": 2910,
+      "outcome": "full_candidate",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://www.engadget.com/2283091/anthropic-says-its-ai-agents-tried-to-break-into-government-websites/",
+          "status": "success",
+          "httpStatus": 200,
+          "message": "Readable article found.",
+          "durationMs": 2910
+        }
+      ],
+      "title": "Anthropic says its AI agents tried to break into government websites - Engadget",
+      "titleMatch": 1,
+      "wordCount": 515,
+      "paragraphCount": 7,
+      "extractionMethod": "readability",
+      "quality": "full",
+      "canonicalUrl": "https://www.engadget.com/2283091/anthropic-says-its-ai-agents-tried-to-break-into-government-websites/",
+      "warnings": []
+    },
+    {
+      "publisher": "The Independent",
+      "url": "https://www.independent.co.uk/news/science/gold-lead-big-bang-theory-large-hadron-collider-b3064578.html",
+      "category": "international-subscription",
+      "evaluatedAt": "2026-10-11T05:50:43.577Z",
+      "durationMs": 3063,
+      "outcome": "full_candidate",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://www.independent.co.uk/news/science/gold-lead-big-bang-theory-large-hadron-collider-b3064578.html",
+          "status": "success",
+          "httpStatus": 200,
+          "message": "Readable article found.",
+          "durationMs": 3063
+        }
+      ],
+      "title": "Scientists mimicking the Big Bang accidentally turn lead into gold",
+      "titleMatch": 1,
+      "wordCount": 663,
+      "paragraphCount": 21,
+      "extractionMethod": "publisher",
+      "quality": "full",
+      "canonicalUrl": "https://www.independent.co.uk/news/science/gold-lead-big-bang-theory-large-hadron-collider-b3064578.html",
+      "warnings": [
+        "The page includes subscription controls; completeness cannot be independently verified."
+      ]
+    },
+    {
+      "publisher": "The Atlantic",
+      "url": "https://www.theatlantic.com/health/2026/10/yogurt-best-protein-source/688950/",
+      "category": "subscription",
+      "evaluatedAt": "2026-10-11T05:50:46.659Z",
+      "durationMs": 3010,
+      "outcome": "full_candidate",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://www.theatlantic.com/health/2026/10/yogurt-best-protein-source/688950/",
+          "status": "success",
+          "httpStatus": 200,
+          "message": "Readable article found.",
+          "durationMs": 3010
+        }
+      ],
+      "title": "The Best Protein Source Is Hiding in Plain Sight",
+      "titleMatch": 1,
+      "wordCount": 706,
+      "paragraphCount": 10,
+      "extractionMethod": "publisher",
+      "quality": "full",
+      "canonicalUrl": "https://www.theatlantic.com/health/2026/10/yogurt-best-protein-source/688950/",
+      "warnings": [
+        "The page includes subscription controls; completeness cannot be independently verified."
+      ]
+    },
+    {
+      "publisher": "The New Yorker",
+      "url": "https://www.newyorker.com/magazine/2026/10/12/year-of-the-horse",
+      "category": "subscription",
+      "evaluatedAt": "2026-10-11T05:50:49.670Z",
+      "durationMs": 2965,
+      "outcome": "full_candidate",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://www.newyorker.com/magazine/2026/10/12/year-of-the-horse",
+          "status": "success",
+          "httpStatus": 200,
+          "message": "Readable article found.",
+          "durationMs": 2965
+        }
+      ],
+      "title": "Year of the Horse",
+      "titleMatch": 1,
+      "wordCount": 5970,
+      "paragraphCount": 61,
+      "extractionMethod": "publisher",
+      "quality": "full",
+      "canonicalUrl": "https://www.newyorker.com/magazine/2026/10/12/year-of-the-horse",
+      "warnings": [
+        "The page includes subscription controls; completeness cannot be independently verified."
+      ]
+    },
+    {
+      "publisher": "Vox",
+      "url": "https://www.vox.com/climate/504991/redwood-tree-california-heat-photosynthesis",
+      "category": "us-general",
+      "evaluatedAt": "2026-10-11T05:54:15.516Z",
+      "durationMs": 7102,
+      "outcome": "full_candidate",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://www.vox.com/climate/504991/redwood-tree-california-heat-photosynthesis",
+          "status": "success",
+          "httpStatus": 200,
+          "message": "Readable article found.",
+          "durationMs": 7097
+        }
+      ],
+      "title": "America’s tallest, most spectacular trees are getting...heat stroke?",
+      "titleMatch": 1,
+      "wordCount": 1361,
+      "paragraphCount": 20,
+      "extractionMethod": "json-ld",
+      "quality": "full",
+      "canonicalUrl": "https://www.vox.com/climate/504991/redwood-tree-california-heat-photosynthesis",
+      "warnings": [
+        "The page includes subscription controls; completeness cannot be independently verified."
+      ]
+    },
+    {
+      "publisher": "Business Insider",
+      "url": "https://www.businessinsider.com/microsoft-ceo-satya-nadella-ai-threat-blog-enterprise-companies-corporations-2026-10",
+      "category": "subscription",
+      "evaluatedAt": "2026-10-11T05:50:55.758Z",
+      "durationMs": 3141,
+      "outcome": "full_candidate",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://www.businessinsider.com/microsoft-ceo-satya-nadella-ai-threat-blog-enterprise-companies-corporations-2026-10",
+          "status": "success",
+          "httpStatus": 200,
+          "message": "Readable article found.",
+          "durationMs": 3141
+        }
+      ],
+      "title": "Satya Nadella says a company's relationship with AI should have trust issues",
+      "titleMatch": 0.6666666666666666,
+      "wordCount": 549,
+      "paragraphCount": 20,
+      "extractionMethod": "readability",
+      "quality": "full",
+      "canonicalUrl": "https://www.businessinsider.com/microsoft-ceo-satya-nadella-ai-threat-blog-enterprise-companies-corporations-2026-10",
+      "warnings": [
+        "The page includes subscription controls; completeness cannot be independently verified."
+      ]
+    },
+    {
+      "publisher": "Scientific American",
+      "url": "https://www.scientificamerican.com/article/ai-solves-a-holy-grail-problem-from-probability-theory/",
+      "category": "science-subscription",
+      "evaluatedAt": "2026-10-11T05:50:58.901Z",
+      "durationMs": 3588,
+      "outcome": "full_candidate",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://www.scientificamerican.com/article/ai-solves-a-holy-grail-problem-from-probability-theory/",
+          "status": "success",
+          "httpStatus": 200,
+          "message": "Readable article found.",
+          "durationMs": 3588
+        }
+      ],
+      "title": "AI has racked up a new math breakthrough, solving a problem of probability theory that one mathematician said would earn a human a Field Medal.",
+      "titleMatch": 1,
+      "wordCount": 1325,
+      "paragraphCount": 27,
+      "extractionMethod": "generic",
+      "quality": "full",
+      "canonicalUrl": "https://www.scientificamerican.com/article/ai-solves-a-holy-grail-problem-from-probability-theory/",
+      "warnings": [
+        "The page includes subscription controls; completeness cannot be independently verified."
+      ]
+    },
+    {
+      "publisher": "BBC News",
+      "url": "https://www.bbc.com/news/articles/cw33x4y8k82no",
+      "category": "international",
+      "evaluatedAt": "2026-10-11T05:51:02.491Z",
+      "durationMs": 2741,
+      "outcome": "full_candidate",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://www.bbc.com/news/articles/cw33x4y8k82no",
+          "status": "success",
+          "httpStatus": 200,
+          "message": "Readable article found.",
+          "durationMs": 2741
+        }
+      ],
+      "title": "Twelve killed in attack on King Khalid Airport in Saudi capital Riyadh",
+      "titleMatch": 1,
+      "wordCount": 696,
+      "paragraphCount": 30,
+      "extractionMethod": "publisher",
+      "quality": "full",
+      "canonicalUrl": "https://www.bbc.com/news/articles/cw33x4y8k82no",
+      "warnings": []
+    },
+    {
+      "publisher": "CNN",
+      "url": "https://edition.cnn.com/2026/10/10/europe/poland-school-arrests-attacks-intl",
+      "category": "us-international",
+      "evaluatedAt": "2026-10-11T05:53:00.937Z",
+      "durationMs": 9757,
+      "outcome": "full_candidate",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://edition.cnn.com/2026/10/10/europe/poland-school-arrests-attacks-intl",
+          "status": "failed",
+          "message": "The publisher returned HTTP 403.",
+          "durationMs": 6743
+        },
+        {
+          "strategy": "standard",
+          "url": "https://edition.cnn.com/2026/10/10/europe/poland-school-arrests-attacks-intl",
+          "status": "success",
+          "httpStatus": 200,
+          "message": "Readable article found.",
+          "durationMs": 3010
+        }
+      ],
+      "title": "Police detain dozens and check 50,000 schools after two attacks shake Poland | CNN",
+      "titleMatch": 1,
+      "wordCount": 658,
+      "paragraphCount": 16,
+      "extractionMethod": "publisher",
+      "quality": "full",
+      "canonicalUrl": "https://www.cnn.com/2026/10/10/europe/poland-school-arrests-attacks-intl",
+      "warnings": []
+    },
+    {
+      "publisher": "NPR",
+      "url": "https://www.npr.org/2026/10/10/nx-s1-5996934/kennedy-center-rick-canny-new-artistic-director",
+      "category": "us-public-radio",
+      "evaluatedAt": "2026-10-11T05:51:19.490Z",
+      "durationMs": 5770,
+      "outcome": "full_candidate",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://www.npr.org/2026/10/10/nx-s1-5996934/kennedy-center-rick-canny-new-artistic-director",
+          "status": "success",
+          "httpStatus": 200,
+          "message": "Readable article found.",
+          "durationMs": 5769
+        }
+      ],
+      "title": "The Kennedy Center names new artistic director, amid concerns",
+      "titleMatch": 1,
+      "wordCount": 716,
+      "paragraphCount": 17,
+      "extractionMethod": "readability",
+      "quality": "full",
+      "canonicalUrl": "https://www.npr.org/2026/10/10/nx-s1-5996934/kennedy-center-rick-canny-new-artistic-director",
+      "warnings": []
+    },
+    {
+      "publisher": "New York Times",
+      "url": "https://www.nytimes.com/2024/07/25/science/ai-math-alphaproof-deepmind.html",
+      "category": "hard-wall",
+      "evaluatedAt": "2026-10-11T05:56:36.553Z",
+      "durationMs": 17185,
+      "outcome": "blocked",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://www.nytimes.com/2024/07/25/science/ai-math-alphaproof-deepmind.html",
+          "status": "failed",
+          "message": "The page contains no readable article, or returned a bot challenge.",
+          "durationMs": 6786
+        },
+        {
+          "strategy": "standard",
+          "url": "https://www.nytimes.com/2024/07/25/science/ai-math-alphaproof-deepmind.html",
+          "status": "failed",
+          "message": "The page contains no readable article, or returned a bot challenge.",
+          "durationMs": 106
+        },
+        {
+          "strategy": "mobile",
+          "url": "https://www.nytimes.com/2024/07/25/science/ai-math-alphaproof-deepmind.html",
+          "status": "failed",
+          "message": "The page contains no readable article, or returned a bot challenge.",
+          "durationMs": 102
+        },
+        {
+          "strategy": "wayback",
+          "url": "https://web.archive.org/web/20251109235534id_/https://www.nytimes.com/2024/07/25/science/ai-math-alphaproof-deepmind.html",
+          "status": "failed",
+          "message": "The publisher returned HTTP 429.",
+          "durationMs": 5934
+        }
+      ],
+      "error": "The publisher did not provide a readable article. Try an existing archive or import a saved HTML page.",
+      "errorCode": "article_unavailable"
+    },
+    {
+      "publisher": "The Economist",
+      "url": "https://www.economist.com/business/2023/03/06/dont-fear-an-ai-induced-jobs-apocalypse-just-yet",
+      "category": "hard-wall",
+      "evaluatedAt": "2026-10-11T05:56:59.929Z",
+      "durationMs": 14661,
+      "outcome": "blocked",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://www.economist.com/business/2023/03/06/dont-fear-an-ai-induced-jobs-apocalypse-just-yet",
+          "status": "failed",
+          "message": "The publisher returned HTTP 402.",
+          "durationMs": 4607
+        },
+        {
+          "strategy": "standard",
+          "url": "https://www.economist.com/business/2023/03/06/dont-fear-an-ai-induced-jobs-apocalypse-just-yet",
+          "status": "failed",
+          "message": "The publisher returned HTTP 402.",
+          "durationMs": 2310
+        },
+        {
+          "strategy": "mobile",
+          "url": "https://www.economist.com/business/2023/03/06/dont-fear-an-ai-induced-jobs-apocalypse-just-yet",
+          "status": "failed",
+          "message": "The publisher returned HTTP 402.",
+          "durationMs": 2739
+        },
+        {
+          "strategy": "wayback",
+          "url": "https://www.economist.com/business/2023/03/06/dont-fear-an-ai-induced-jobs-apocalypse-just-yet",
+          "status": "failed",
+          "message": "Internet Archive lookup was unavailable.",
+          "durationMs": 5001
+        }
+      ],
+      "error": "The publisher did not provide a readable article. Try an existing archive or import a saved HTML page.",
+      "errorCode": "article_unavailable"
+    },
+    {
+      "publisher": "OregonLive",
+      "url": "https://www.oregonlive.com/crime/2024/10/kidnapped-for-crypto-4-men-flew-from-florida-to-portland-tied-a-man-to-a-post-before-stealing-his-cryptocurrency-feds-say.html",
+      "category": "local-subscription",
+      "evaluatedAt": "2026-10-11T05:57:21.247Z",
+      "durationMs": 11203,
+      "outcome": "full_candidate",
+      "attempts": [
+        {
+          "strategy": "googlebot",
+          "url": "https://www.oregonlive.com/crime/2024/10/kidnapped-for-crypto-4-men-flew-from-florida-to-portland-tied-a-man-to-a-post-before-stealing-his-cryptocurrency-feds-say.html",
+          "status": "failed",
+          "message": "The publisher returned HTTP 403.",
+          "durationMs": 5721
+        },
+        {
+          "strategy": "standard",
+          "url": "https://www.oregonlive.com/crime/2024/10/kidnapped-for-crypto-4-men-flew-from-florida-to-portland-tied-a-man-to-a-post-before-stealing-his-cryptocurrency-feds-say.html",
+          "status": "failed",
+          "message": "The publisher returned HTTP 403.",
+          "durationMs": 2422
+        },
+        {
+          "strategy": "mobile",
+          "url": "https://www.oregonlive.com/crime/2024/10/kidnapped-for-crypto-4-men-flew-from-florida-to-portland-tied-a-man-to-a-post-before-stealing-his-cryptocurrency-feds-say.html",
+          "status": "success",
+          "httpStatus": 200,
+          "message": "Readable article found.",
+          "durationMs": 3056
+        }
+      ],
+      "title": "Kidnapped for crypto: 4 men flew from Florida to Portland, tied a man to a post before stealing his cryptocurrency, feds say",
+      "titleMatch": 1,
+      "wordCount": 541,
+      "paragraphCount": 17,
+      "extractionMethod": "publisher",
+      "quality": "full",
+      "canonicalUrl": "https://www.oregonlive.com/crime/2024/10/kidnapped-for-crypto-4-men-flew-from-florida-to-portland-tied-a-man-to-a-post-before-stealing-his-cryptocurrency-feds-say.html",
+      "warnings": [
+        "The page includes subscription controls; completeness cannot be independently verified."
+      ]
+    }
+  ]
+}

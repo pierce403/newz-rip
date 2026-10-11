@@ -10,10 +10,11 @@
     "check": "tsc --noEmit",
     "test": "vitest run",
     "build": "npm run build:web && wrangler deploy --dry-run --outdir dist",
-    "deploy": "npm run build:web && wrangler deploy",
+    "deploy": "npm run build:web && node scripts/deploy.mjs",
     "db:local": "wrangler d1 migrations apply newz-rip --local",
     "db:remote": "wrangler d1 migrations apply newz-rip --remote",
-    "compat": "node --import tsx scripts/compat.ts"
+    "compat": "node --import tsx scripts/compat.ts",
+    "setup:cloudflare": "node scripts/setup-cloudflare.mjs"
   },
   "dependencies": {
     "@cloudflare/puppeteer": "1.4.0",
