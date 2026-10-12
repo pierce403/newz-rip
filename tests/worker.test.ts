@@ -13,7 +13,7 @@ async function save(extra:Record<string,unknown>={}){
 }
 
 beforeAll(async()=>{
-  await build({entryPoints:['web/app.ts'],bundle:true,format:'esm',outfile:'public/app.js'});
+  await build({entryPoints:['web/app.ts'],bundle:true,minify:true,format:'esm',outfile:'public/app.js'});
   execFileSync(process.execPath,['node_modules/wrangler/bin/wrangler.js','deploy','--dry-run','--outdir','.wrangler/test-build'],{env:{...process.env,WRANGLER_SEND_METRICS:'false'},stdio:'pipe'});
   worker=new Miniflare(convertV4MiniflareOptions({modules:true,scriptPath:'.wrangler/test-build/index.js',compatibilityDate:'2026-08-06',compatibilityFlags:['nodejs_compat'],d1Databases:{DB:'test-db'},r2Buckets:{ARCHIVE:'test-archive'},bindings:{APP_NAME:'newz.rip',ARCHIVE_IMAGES:'false',ALLOW_WAYBACK:'false'},outboundService:async (request:RuntimeRequest)=>{
     const url=new URL(request.url);
