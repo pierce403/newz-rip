@@ -10,7 +10,7 @@ const local = storage('localStorage');
 const session = storage('sessionStorage');
 const savedTheme = local && memory.read(local, 'newz-theme');
 if (savedTheme === 'dark' || savedTheme === 'light') document.documentElement.dataset.theme = savedTheme;
-const themeIsDark = (): boolean => document.documentElement.dataset.theme ? document.documentElement.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+const themeIsDark = (): boolean => document.documentElement.dataset.theme === 'dark';
 function updateThemeLabel(): void {
   all<HTMLButtonElement>('[data-theme-toggle]').forEach((button) => {
     const label = `Switch to ${themeIsDark() ? 'light' : 'dark'} theme`;
@@ -55,10 +55,10 @@ all<HTMLButtonElement>('[data-copy-link]').forEach((button) => button.addEventLi
   const url = location.origin + location.pathname;
   try {
     await navigator.clipboard.writeText(url);
-    toast('Link to this edition copied.');
+    toast('Link copied');
   } catch {
-    if (snapshotLink) { snapshotLink.focus(); snapshotLink.select(); toast('Select and copy the edition link below.'); }
-    else toast('Copy the link from your address bar.');
+    if (snapshotLink) { snapshotLink.focus(); snapshotLink.select(); toast('Copy the link below'); }
+    else toast('Copy the address bar link');
   }
 }));
 
@@ -74,6 +74,11 @@ tokenInputs.forEach((input) => {
 });
 function revealToken(): void {
   const details = query<HTMLDetailsElement>('[data-token-details]');
+  const ancestors: HTMLDetailsElement[] = [];
+  for (let element = details?.parentElement; element; element = element.parentElement) {
+    if (element instanceof HTMLDetailsElement) ancestors.unshift(element);
+  }
+  ancestors.forEach((ancestor) => { ancestor.open = true; });
   if (details) details.open = true;
   tokenInputs[0]?.focus();
 }
@@ -97,16 +102,16 @@ async function requestCapture(path: string, body: Record<string, unknown>): Prom
     });
     let result: CaptureResponse;
     try { result = await response.json() as CaptureResponse; }
-    catch { throw new CaptureError('The reading room returned an unexpected response. Please try again in a moment.', response.status); }
+    catch { throw new CaptureError('Unexpected response. Try again.', response.status); }
     if (!response.ok) {
       const reason = typeof result.error === 'string' ? result.error : result.error?.message;
-      throw new CaptureError(reason || result.message || (response.status === 401 ? 'This archive needs an access key. Add it below, then try again.' : 'The article could not be saved. Please try again.'), response.status);
+      throw new CaptureError(reason || result.message || (response.status === 401 ? 'Access key required. Add it below and retry.' : 'Could not save. Try again.'), response.status);
     }
-    if (!result.snapshot?.id) throw new CaptureError('The page was processed, but no saved edition was returned. Please try again.', 500);
+    if (!result.snapshot?.id) throw new CaptureError('No snapshot returned. Try again.', 500);
     return result.snapshot.id;
   } catch (error) {
-    if (error instanceof DOMException && error.name === 'AbortError') throw new CaptureError('This article is taking longer than expected. Try again, or look for an archived copy below.', 408);
-    if (error instanceof TypeError) throw new CaptureError('The connection was interrupted. Check your connection and try again.', 0);
+    if (error instanceof DOMException && error.name === 'AbortError') throw new CaptureError('Timed out. Retry or check existing snapshots below.', 408);
+    if (error instanceof TypeError) throw new CaptureError('Connection lost. Check your connection and retry.', 0);
     throw error;
   } finally { clearTimeout(timeout); }
 }
@@ -125,18 +130,18 @@ async function captureArticle(): Promise<void> {
   if (failure) failure.hidden = true;
   if (progress) progress.hidden = false;
   if (retry) retry.disabled = true;
-  if (message) message.textContent = 'Opening the article and checking for a readable copy…';
-  const slowMessage = setTimeout(() => { if (message) message.textContent = 'Still working on this story. Some publishers need a few extra moments…'; }, 18_000);
-  const longerMessage = setTimeout(() => { if (message) message.textContent = 'This publisher is taking a little longer. We’re still looking for a readable edition…'; }, 55_000);
+  if (message) message.textContent = 'Saving…';
+  const slowMessage = setTimeout(() => { if (message) message.textContent = 'Still saving…'; }, 18_000);
+  const longerMessage = setTimeout(() => { if (message) message.textContent = 'Taking longer than usual…'; }, 55_000);
   try {
     const refresh = new URLSearchParams(location.search).get('refresh') === '1';
     const id = await requestCapture('/api/capture', { url, ...(refresh ? { refresh: true } : {}) });
-    if (message) message.textContent = 'Your edition is ready. Opening it now…';
+    if (message) message.textContent = 'Saved. Opening…';
     location.replace(`/s/${encodeURIComponent(id)}`);
   } catch (error) {
     const errorMessage = query<HTMLElement>('[data-error-message]');
-    if (errorMessage) errorMessage.textContent = error instanceof Error ? error.message : 'An unexpected error interrupted this article. Please try again.';
-    if (message) message.textContent = 'The article isn’t ready yet.';
+    if (errorMessage) errorMessage.textContent = error instanceof Error ? error.message : 'Could not save. Try again.';
+    if (message) message.textContent = 'Could not save.';
     if (progress) progress.hidden = true;
     if (failure) failure.hidden = false;
     if (error instanceof CaptureError && (error.status === 401 || error.status === 403)) revealToken();
@@ -152,7 +157,7 @@ if (captureStatus) void captureArticle();
 query<HTMLFormElement>('[data-capture-form]')?.addEventListener('submit', (event) => {
   const form = event.currentTarget as HTMLFormElement;
   const button = query<HTMLButtonElement>('button[type="submit"]', form);
-  if (button) { button.disabled = true; button.textContent = 'Opening…'; }
+  if (button) { button.disabled = true; button.textContent = 'Saving…'; }
 });
 
 query<HTMLFormElement>('[data-import-form]')?.addEventListener('submit', async (event) => {
@@ -165,19 +170,19 @@ query<HTMLFormElement>('[data-import-form]')?.addEventListener('submit', async (
   if (errorElement) errorElement.hidden = true;
   if (!file || !url) return;
   if (file.size > 2 * 1024 * 1024) {
-    if (errorElement) { errorElement.textContent = 'Choose an HTML file no larger than 2 MB.'; errorElement.hidden = false; }
+    if (errorElement) { errorElement.textContent = 'HTML file must be 2 MB or smaller.'; errorElement.hidden = false; }
     return;
   }
-  if (button) { button.disabled = true; button.textContent = 'Saving your page…'; }
+  if (button) { button.disabled = true; button.textContent = 'Saving…'; }
   try {
     const html = await file.text();
-    if (!html.trim()) throw new Error('This file is empty. Choose a saved HTML page.');
+    if (!html.trim()) throw new Error('Empty file. Choose a saved HTML page.');
     const id = await requestCapture('/api/import', { url, html });
     location.assign(`/s/${encodeURIComponent(id)}`);
   } catch (error) {
-    if (errorElement) { errorElement.textContent = error instanceof Error ? error.message : 'This page could not be saved.'; errorElement.hidden = false; }
+    if (errorElement) { errorElement.textContent = error instanceof Error ? error.message : 'Could not save. Try again.'; errorElement.hidden = false; }
     if (error instanceof CaptureError && (error.status === 401 || error.status === 403)) revealToken();
-    if (button) { button.disabled = false; button.textContent = 'Save this page →'; }
+    if (button) { button.disabled = false; button.textContent = 'Save'; }
   }
 });
 

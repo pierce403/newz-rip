@@ -45,11 +45,11 @@ describe('reader pages', () => {
   });
   it('shows an honest warning for partial copies and preserves edition history', () => {
     const html = renderSnapshot({ ...stored, article: { ...stored.article, quality: 'partial', warnings: ['Only the opening paragraphs were available.'] } }, [snapshot, { ...snapshot, id: 'older', capturedAt: '2026-10-10T05:00:00Z' }]);
-    expect(html).toContain('This copy may be incomplete.');
+    expect(html).toContain('Partial copy');
     expect(html).toContain('Only the opening paragraphs were available.');
-    expect(html).toContain('2 saved editions');
+    expect(html).toContain('2 snapshots');
     expect(html).toContain('/s/older');
-    expect(html).toContain('Reading this edition');
+    expect(html).toContain('aria-current="page"');
   });
   it('escapes search state and provides pagination', () => {
     const html = renderArchive([{ ...snapshot, title: '<script>bad</script>', siteName: 'News & Notes' }], '"><script>bad</script>', 2, true);
@@ -57,7 +57,7 @@ describe('reader pages', () => {
     expect(html).toContain('News &amp; Notes');
     expect(html).toContain('page=1');
     expect(html).toContain('page=3');
-    expect(renderArchive([], '', 1, false)).toContain('The first story is yours.');
+    expect(renderArchive([], '', 1, false)).toContain('No saved pages yet.');
   });
   it('renders errors without creating active supplied markup', () => {
     expect(renderError('<script>bad</script>')).toContain('&lt;script&gt;bad&lt;/script&gt;');
@@ -70,6 +70,8 @@ describe('reader pages', () => {
     expect(html).toContain('href="/manifest.webmanifest"');
     expect(html).not.toContain('<script>');
     expect(html).toContain('data-import-form');
+    expect(html).toContain('action="/read" method="get"');
+    expect(html).toContain('action="/archive" method="get"');
     expect(html).toContain('type="password"');
     expect(html).not.toContain('name="capture-token"');
     expect(html).toContain('Skip to content');

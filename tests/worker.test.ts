@@ -29,7 +29,7 @@ afterAll(async()=>{await worker?.dispose();});
 
 describe('real Workers + D1 + R2 archive',()=>{
   it('serves the home page with strict headers and validates health',async()=>{
-    const response=await call('/');expect(response.status).toBe(200);expect(await response.text()).toContain('Start with a link');
+    const response=await call('/');expect(response.status).toBe(200);expect(await response.text()).toContain('Save a page');
     expect(response.headers.get('content-security-policy')).toContain("script-src 'self'");
     const health=await call('/api/health');expect((await health.json() as {ok:boolean}).ok).toBe(true);
   });
