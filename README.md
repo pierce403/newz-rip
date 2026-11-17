@@ -125,4 +125,10 @@ Capture/import responses contain `{ snapshot, article, attempts, cached }`. Erro
 
 Tests include real workerd requests, D1 migrations/full-text search, R2 persistence, duplicate/version behavior, exports, token and deletion controls, rate limits and unsafe input rejection. No visual browser QA or live Cloudflare browser session was available. The bundled Worker is validated with Wrangler's production dry run. See the committed compatibility result JSON for dated evidence.
 
-MIT licensed. 13ft is MIT licensed; this implementation uses independently authored code and does not copy its Python or visual assets. Mozilla Readability and linkedom retain their respective package licenses. Archived articles remain their publishers' content.
+Apache-2.0 licensed; see [LICENSE](LICENSE). Earlier revisions were released under MIT; that grant is not revoked. 13ft is MIT licensed; this implementation uses independently authored code and does not copy its Python or visual assets. Mozilla Readability and linkedom retain their respective package licenses. Archived articles remain their publishers' content.
+
+## License
+
+Copyright 2026 Dean Pierce.
+
+The original code and documentation authored for this project are licensed under the [Apache License, Version 2.0](LICENSE). Third-party dependencies, quoted source material, data, fonts, media, and other third-party assets retain their respective licenses and rights; this grant does not relicense them.
